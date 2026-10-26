@@ -10,14 +10,18 @@ out/
 .wrangler/
 
 # Secrets and local env — never commit
-.env
-.env*.local
+.env*
+!.env.example
+*.pem
 .dev.vars
 .dev.vars.*
 
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Test coverage
+coverage/
 
 # Logs
 *.log

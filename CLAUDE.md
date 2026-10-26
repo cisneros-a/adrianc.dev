@@ -15,7 +15,7 @@ The portfolio links out to the side projects. Each side project can be deployed 
 
 Adrian may not know every tool used here. When working in this repo:
 
-1. **Explain tools.** The first time a tool, service, library or command comes up in a conversation, say in one or two sentences what it is and what it does *here*. Be accurate and concise, and don't assume it's already known.
+1. **Explain tools.** The first time a tool, service, library or command comes up in a conversation, say in one or two sentences what it is and what it does _here_. Be accurate and concise, and don't assume it's already known.
 2. **Separate requirements from design decisions.** Whenever you propose or describe how something works, say which it is:
    - **Requirement:** something Adrian asked for, or something forced by the platform (e.g. "static export can't run API routes").
    - **Design decision:** a choice among options. Say who made it (Adrian, or a default Claude proposed), give the reason, and name the main alternatives.
@@ -25,33 +25,33 @@ Adrian may not know every tool used here. When working in this repo:
 
 What has to be true. Change these only when Adrian says so.
 
-| # | Requirement | Source |
-|---|-------------|--------|
-| R1 | The portfolio is served at `adrianc.dev`. | Adrian |
-| R2 | Side projects are served at `<project>.adrianc.dev`. | Adrian |
-| R3 | Hosted on Cloudflare (DNS for `adrianc.dev` is already there). | Adrian |
-| R4 | Source code is kept and maintained on GitHub. | Adrian |
-| R5 | Each side project can be deployed independently. | Follows from R2 |
-| R6 | The portfolio can't use Next.js server features: API routes, middleware, Server Actions, rendering on request, or the built-in image optimizer. Every page must be buildable ahead of time. | Platform (follows from D10) |
-| R7 | Full-stack apps run on Workers, which means no long-running server process, CPU-time limits per request (about 10 ms free, 30 s by default on paid), a Worker size limit (about 3 MB compressed free, 10 MB paid), and only partial Node.js API support (`nodejs_compat`). | Platform (applies to D11) |
+| #   | Requirement                                                                                                                                                                                                                                                                | Source                      |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| R1  | The portfolio is served at `adrianc.dev`.                                                                                                                                                                                                                                  | Adrian                      |
+| R2  | Side projects are served at `<project>.adrianc.dev`.                                                                                                                                                                                                                       | Adrian                      |
+| R3  | Hosted on Cloudflare (DNS for `adrianc.dev` is already there).                                                                                                                                                                                                             | Adrian                      |
+| R4  | Source code is kept and maintained on GitHub.                                                                                                                                                                                                                              | Adrian                      |
+| R5  | Each side project can be deployed independently.                                                                                                                                                                                                                           | Follows from R2             |
+| R6  | The portfolio can't use Next.js server features: API routes, middleware, Server Actions, rendering on request, or the built-in image optimizer. Every page must be buildable ahead of time.                                                                                | Platform (follows from D10) |
+| R7  | Full-stack apps run on Workers, which means no long-running server process, CPU-time limits per request (about 10 ms free, 30 s by default on paid), a Worker size limit (about 3 MB compressed free, 10 MB paid), and only partial Node.js API support (`nodejs_compat`). | Platform (applies to D11)   |
 
 ## Design decisions
 
-**Status:** *Decided* = Adrian chose it. *Proposed* = a default Claude suggested that Adrian hasn't confirmed yet; flag it before building heavily on it.
+**Status:** _Decided_ = Adrian chose it. _Proposed_ = a default Claude suggested that Adrian hasn't confirmed yet; flag it before building heavily on it.
 
-| # | Decision | Choice | Why | Main alternatives | Status |
-|---|----------|--------|-----|-------------------|--------|
-| D1 | Framework | Next.js (App Router) | Adrian's choice | Astro, SvelteKit, plain HTML | Decided |
-| D2 | Styling | Tailwind CSS v4 | Fast to iterate; theme is easy to share across apps | Plain CSS, CSS Modules | Decided |
-| D3 | How deploys happen | Wrangler, run from Adrian's laptop | Simplest setup; no CI to maintain | GitHub Actions + Wrangler, Cloudflare Workers Builds | Decided |
-| D4 | Hosting product (portfolio) | Cloudflare Workers static assets: Cloudflare serves the files in `out/` directly, with no Worker code | No adapter; free static requests; no Worker size limit | OpenNext on Workers, Cloudflare Pages | Decided |
-| D5 | Repo structure | Monorepo: one folder per site under `apps/` | One repo for everything (R4) while apps stay independent (R5) | One GitHub repo per project | Decided |
-| D6 | Package manager | pnpm with workspaces | Handles monorepos well; fast; saves disk space | npm workspaces, Yarn, Bun | Decided |
-| D7 | Language | TypeScript, strict mode | Catches errors before runtime | JavaScript | Decided |
-| D8 | Lint/format | ESLint (Next.js config) + Prettier with Tailwind plugin | Standard for Next.js projects | Biome | Decided |
-| D9 | Git workflow | Short-lived branches, PRs into `main`, Conventional Commits | Keeps `main` clean and the history readable | Commit straight to `main` | Decided |
-| D10 | Portfolio rendering | Next.js static export (`output: "export"` in `next.config.ts`) builds every page as HTML/CSS/JS in `out/` | Avoids OpenNext friction; the portfolio doesn't need server features. Can switch to OpenNext later if it does | Full Next.js via OpenNext; Astro | Decided |
-| D11 | Stack per side project | Each app picks its own stack and records it, with its requirements and decisions, in its own README. Default to Next.js + Tailwind for familiarity; full-stack apps use OpenNext or another Workers-friendly framework | Apps are independent (R5), so each can use what fits it | One stack for everything | Decided |
+| #   | Decision                    | Choice                                                                                                                                                                                                                 | Why                                                                                                           | Main alternatives                                    | Status  |
+| --- | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- | ------- |
+| D1  | Framework                   | Next.js (App Router)                                                                                                                                                                                                   | Adrian's choice                                                                                               | Astro, SvelteKit, plain HTML                         | Decided |
+| D2  | Styling                     | Tailwind CSS v4                                                                                                                                                                                                        | Fast to iterate; theme is easy to share across apps                                                           | Plain CSS, CSS Modules                               | Decided |
+| D3  | How deploys happen          | Wrangler, run from Adrian's laptop                                                                                                                                                                                     | Simplest setup; no CI to maintain                                                                             | GitHub Actions + Wrangler, Cloudflare Workers Builds | Decided |
+| D4  | Hosting product (portfolio) | Cloudflare Workers static assets: Cloudflare serves the files in `out/` directly, with no Worker code                                                                                                                  | No adapter; free static requests; no Worker size limit                                                        | OpenNext on Workers, Cloudflare Pages                | Decided |
+| D5  | Repo structure              | Monorepo: one folder per site under `apps/`                                                                                                                                                                            | One repo for everything (R4) while apps stay independent (R5)                                                 | One GitHub repo per project                          | Decided |
+| D6  | Package manager             | pnpm with workspaces                                                                                                                                                                                                   | Handles monorepos well; fast; saves disk space                                                                | npm workspaces, Yarn, Bun                            | Decided |
+| D7  | Language                    | TypeScript, strict mode                                                                                                                                                                                                | Catches errors before runtime                                                                                 | JavaScript                                           | Decided |
+| D8  | Lint/format                 | ESLint (Next.js config) + Prettier with Tailwind plugin                                                                                                                                                                | Standard for Next.js projects                                                                                 | Biome                                                | Decided |
+| D9  | Git workflow                | Short-lived branches, PRs into `main`, Conventional Commits                                                                                                                                                            | Keeps `main` clean and the history readable                                                                   | Commit straight to `main`                            | Decided |
+| D10 | Portfolio rendering         | Next.js static export (`output: "export"` in `next.config.ts`) builds every page as HTML/CSS/JS in `out/`                                                                                                              | Avoids OpenNext friction; the portfolio doesn't need server features. Can switch to OpenNext later if it does | Full Next.js via OpenNext; Astro                     | Decided |
+| D11 | Stack per side project      | Each app picks its own stack and records it, with its requirements and decisions, in its own README. Default to Next.js + Tailwind for familiarity; full-stack apps use OpenNext or another Workers-friendly framework | Apps are independent (R5), so each can use what fits it                                                       | One stack for everything                             | Decided |
 
 ## Tools glossary
 
@@ -72,7 +72,8 @@ Short descriptions of each tool and its role here. Add entries as new tools come
   - **Durable Objects:** small stateful servers for real-time features.
 - **Tailwind CSS** — styling with small utility classes written directly in the markup (e.g. `px-4 text-lg`).
 - **TypeScript** — JavaScript with type checking.
-- **pnpm** — installs JavaScript packages. Its "workspaces" feature lets one repo hold several apps.
+- **pnpm** — installs JavaScript packages. Its "workspaces" feature lets one repo hold several apps. `pnpm-workspace.yaml` lists the workspaces and, under `allowBuilds`, which packages may run install scripts (pnpm blocks them by default as a safety measure).
+- **Corepack** — a tool that ships with Node.js and runs the exact pnpm version pinned in the root `package.json` (`packageManager` field), so everyone uses the same version.
 - **ESLint / Prettier** — ESLint flags likely bugs and bad patterns. Prettier formats code automatically.
 - **Git / GitHub** — Git tracks changes to the code. GitHub hosts the repo online.
 
@@ -84,6 +85,10 @@ Short descriptions of each tool and its role here. Add entries as new tools come
 │   ├── portfolio/        # adrianc.dev
 │   └── <project-name>/   # <project-name>.adrianc.dev
 ├── packages/             # shared code (UI, styles, config), only when actually shared
+├── package.json          # root scripts (lint, typecheck, format) and the pinned pnpm version
+├── pnpm-workspace.yaml   # workspace list and allowed install scripts
+├── pnpm-lock.yaml        # exact installed versions; commit it, never edit by hand
+├── .prettierrc.json      # Prettier config (shared by all apps)
 └── CLAUDE.md
 ```
 
@@ -102,6 +107,7 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 - **Custom domains** are set per app in `wrangler.jsonc` (e.g. `adrianc.dev` for the portfolio).
 - **Portfolio:** `wrangler.jsonc` points `assets.directory` at `./out` and has no `main` entry, because there's no Worker code. A deploy builds with `next build`, then uploads `out/` with `wrangler deploy`.
 - **Secrets** (full-stack apps only; the static portfolio has no server to use them): use `wrangler secret put` for production and `.dev.vars` for local dev. **Never commit secrets**, `.dev.vars` or `.env` files. Anything in the portfolio's code is public.
+- **First deploy of a new domain:** `custom_domain: true` makes Cloudflare create the DNS record for that hostname. If a record already exists (e.g. an older site at `adrianc.dev`), check it in the Cloudflare dashboard first. The deploy fails or replaces what's there.
 - Claude must not run a deploy without Adrian's explicit go-ahead.
 
 ### Adding a new side project
@@ -114,13 +120,15 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App | URL | Description | Status |
-|-----|-----|-------------|--------|
-| portfolio | https://adrianc.dev | Main portfolio site | Not started |
+| App       | URL                 | Description         | Status                                      |
+| --------- | ------------------- | ------------------- | ------------------------------------------- |
+| portfolio | https://adrianc.dev | Main portfolio site | Scaffolded (placeholder page, not deployed) |
 
 ## Commands
 
-Expected commands once the apps are scaffolded (confirm them against each app's `package.json`):
+**One-time setup per machine:** run `corepack enable pnpm` so the `pnpm` command exists. Until then, prefix commands with `corepack` (e.g. `corepack pnpm install`).
+
+Run from the repo root:
 
 ```bash
 pnpm install                         # install dependencies for all apps
@@ -128,7 +136,8 @@ pnpm --filter portfolio dev          # Next.js dev server, for fast iteration
 pnpm --filter portfolio build        # static export to apps/portfolio/out/
 pnpm --filter portfolio preview      # build, then serve out/ locally with `wrangler dev`, just as Cloudflare will
 pnpm --filter portfolio deploy       # build, then `wrangler deploy` to Cloudflare
-pnpm lint && pnpm typecheck
+pnpm lint && pnpm typecheck          # all apps
+pnpm format                          # format everything with Prettier (format:check to only check)
 ```
 
 Run `build` before calling a change done. `next dev` allows things that static export rejects (see R6), and `build` fails on them.

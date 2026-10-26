@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Which packages may run install scripts (pnpm blocks them by default).
+allowBuilds:
+  # Needed by Wrangler: esbuild bundles code, workerd is the local Workers runtime.
+  esbuild: true
+  workerd: true
+  # Optional native helpers the static portfolio doesn't need
+  # (sharp is only used by the image optimizer).
+  sharp: false
+  unrs-resolver: false
