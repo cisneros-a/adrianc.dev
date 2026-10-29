@@ -1,4 +1,12 @@
 {
   "plugins": ["prettier-plugin-tailwindcss"],
-  "tailwindStylesheet": "./apps/portfolio/src/app/globals.css"
+  "tailwindStylesheet": "./apps/portfolio/src/app/globals.css",
+  "overrides": [
+    {
+      "files": "apps/todo-plus/**",
+      "options": {
+        "tailwindStylesheet": "./apps/todo-plus/src/app/globals.css"
+      }
+    }
+  ]
 }
