@@ -83,6 +83,7 @@ Short descriptions of each tool and its role here. Add entries as new tools come
 .
 ├── apps/
 │   ├── portfolio/        # adrianc.dev
+│   ├── todo-plus/        # todo-plus.adrianc.dev (To Do +)
 │   └── <project-name>/   # <project-name>.adrianc.dev
 ├── packages/             # shared code (UI, styles, config), only when actually shared
 ├── package.json          # root scripts (lint, typecheck, format) and the pinned pnpm version
@@ -120,9 +121,10 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App       | URL                 | Description         | Status                                      |
-| --------- | ------------------- | ------------------- | ------------------------------------------- |
-| portfolio | https://adrianc.dev | Main portfolio site | Scaffolded (placeholder page, not deployed) |
+| App       | URL                           | Description                                                                                        | Status                                                           |
+| --------- | ----------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| portfolio | https://adrianc.dev           | Main portfolio site                                                                                | Scaffolded (placeholder page, not deployed)                      |
+| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and task types ([README](apps/todo-plus/README.md)) | Iteration 1 in progress (core list features built, not deployed) |
 
 ## Commands
 

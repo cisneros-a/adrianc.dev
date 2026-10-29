@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+/*
+ * Theme tokens (TD13): every color is defined once for light and once for dark.
+ * Components use the token names (bg-surface, text-muted, ...), never raw colors.
+ *
+ * Which set applies (TD12):
+ * - data-theme="light" or "dark" on <html>: the user's choice from the toggle
+ * - no data-theme: follow the device setting (prefers-color-scheme)
+ */
+
+:root {
+  color-scheme: light;
+  --background: #f4f4f5;
+  --surface: #ffffff;
+  --surface-muted: #ececef;
+  --foreground: #18181b;
+  --muted: #5f5f68;
+  --border: #dcdce0;
+  --accent: #4f46e5;
+  --accent-foreground: #ffffff;
+  --danger: #c81e1e;
+  --priority-low-bg: #eef2f6;
+  --priority-low-fg: #475569;
+  --priority-medium-bg: #e0f2fe;
+  --priority-medium-fg: #075985;
+  --priority-high-bg: #fef3c7;
+  --priority-high-fg: #92400e;
+  --priority-urgent-bg: #fee2e2;
+  --priority-urgent-fg: #b91c1c;
+}
+
+/* Dark tokens, used when the device prefers dark and the user hasn't picked light... */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --background: #0b0b0d;
+    --surface: #17171a;
+    --surface-muted: #232328;
+    --foreground: #ececef;
+    --muted: #a1a1aa;
+    --border: #2f2f35;
+    --accent: #8b93f8;
+    --accent-foreground: #0b0b0d;
+    --danger: #f87171;
+    --priority-low-bg: #1e2633;
+    --priority-low-fg: #cbd5e1;
+    --priority-medium-bg: #0c3a57;
+    --priority-medium-fg: #bae6fd;
+    --priority-high-bg: #5a2f0c;
+    --priority-high-fg: #fde68a;
+    --priority-urgent-bg: #6b1a1a;
+    --priority-urgent-fg: #fecaca;
+  }
+}
+
+/* ...and when the user has picked dark (keep in sync with the block above). */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #0b0b0d;
+  --surface: #17171a;
+  --surface-muted: #232328;
+  --foreground: #ececef;
+  --muted: #a1a1aa;
+  --border: #2f2f35;
+  --accent: #8b93f8;
+  --accent-foreground: #0b0b0d;
+  --danger: #f87171;
+  --priority-low-bg: #1e2633;
+  --priority-low-fg: #cbd5e1;
+  --priority-medium-bg: #0c3a57;
+  --priority-medium-fg: #bae6fd;
+  --priority-high-bg: #5a2f0c;
+  --priority-high-fg: #fde68a;
+  --priority-urgent-bg: #6b1a1a;
+  --priority-urgent-fg: #fecaca;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-danger: var(--danger);
+  --color-priority-low-bg: var(--priority-low-bg);
+  --color-priority-low-fg: var(--priority-low-fg);
+  --color-priority-medium-bg: var(--priority-medium-bg);
+  --color-priority-medium-fg: var(--priority-medium-fg);
+  --color-priority-high-bg: var(--priority-high-bg);
+  --color-priority-high-fg: var(--priority-high-fg);
+  --color-priority-urgent-bg: var(--priority-urgent-bg);
+  --color-priority-urgent-fg: var(--priority-urgent-fg);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Stop the list scrolling behind the open detail panel. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
