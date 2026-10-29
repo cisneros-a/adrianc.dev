@@ -121,10 +121,10 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App       | URL                           | Description                                                                                        | Status                                                  |
-| --------- | ----------------------------- | -------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| portfolio | https://adrianc.dev           | Main portfolio site                                                                                | Scaffolded (placeholder page, not deployed)             |
-| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and task types ([README](apps/todo-plus/README.md)) | Iteration 1 scaffolded (placeholder page, not deployed) |
+| App       | URL                           | Description                                                                                        | Status                                                           |
+| --------- | ----------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| portfolio | https://adrianc.dev           | Main portfolio site                                                                                | Scaffolded (placeholder page, not deployed)                      |
+| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and task types ([README](apps/todo-plus/README.md)) | Iteration 1 in progress (core list features built, not deployed) |
 
 ## Commands
 
