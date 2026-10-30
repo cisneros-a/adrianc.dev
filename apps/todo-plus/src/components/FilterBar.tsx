@@ -15,6 +15,7 @@ import {
   type Filters,
 } from "@/lib/tasks/filters";
 import { Chip } from "./Chip";
+import { SECTION_LABEL } from "./styles";
 
 type FilterBarProps = {
   filters: Filters;
@@ -116,9 +117,7 @@ function FilterGroup({
 }) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-xs font-semibold tracking-wide text-muted uppercase">
-        {label}
-      </legend>
+      <legend className={`mb-2 ${SECTION_LABEL}`}>{label}</legend>
       <div className="flex flex-wrap gap-2">{children}</div>
     </fieldset>
   );
