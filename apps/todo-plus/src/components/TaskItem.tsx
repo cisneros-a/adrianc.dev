@@ -1,9 +1,23 @@
 "use client";
 
-import { STATUS_LABELS, TASK_TYPE_LABELS, type Task } from "@/lib/tasks/model";
+import {
+  STATUS_LABELS,
+  TASK_TYPE_LABELS,
+  type Task,
+  type TaskType,
+} from "@/lib/tasks/model";
 import { formatDeadline, isOverdue } from "@/lib/tasks/dates";
 import { updateTask } from "@/lib/tasks/store";
 import { PriorityBadge } from "./PriorityBadge";
+
+// A solid strip of the task type's color on the right of the card (TD17).
+// Full class names so Tailwind can find them when building the CSS.
+const TYPE_EDGE: Record<TaskType, string> = {
+  work: "shadow-[4px_0_0_0_var(--color-type-work)]",
+  personal: "shadow-[4px_0_0_0_var(--color-type-personal)]",
+  school: "shadow-[4px_0_0_0_var(--color-type-school)]",
+  errands: "shadow-[4px_0_0_0_var(--color-type-errands)]",
+};
 
 type TaskItemProps = {
   task: Task;
@@ -18,7 +32,9 @@ export function TaskItem({ task, today, onOpen }: TaskItemProps) {
     !done && task.deadline !== null && isOverdue(task.deadline, today);
 
   return (
-    <li className="flex items-stretch rounded-xl border border-border bg-surface">
+    <li
+      className={`flex items-stretch rounded-xl border border-border bg-surface ${TYPE_EDGE[task.type]}`}
+    >
       <label className="flex shrink-0 cursor-pointer items-center px-4">
         <input
           type="checkbox"

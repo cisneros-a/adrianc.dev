@@ -7,11 +7,12 @@ import {
   STATUSES,
   STATUS_LABELS,
   TASK_TYPES,
-  TASK_TYPE_LABELS,
   type Task,
 } from "@/lib/tasks/model";
 import { deleteTask, updateTask } from "@/lib/tasks/store";
 import { Chip } from "./Chip";
+import { TypeChip } from "./TypeChip";
+import { SECTION_LABEL } from "./styles";
 
 type TaskPanelProps = {
   /** The task to show, or null when the panel is closed. */
@@ -119,7 +120,7 @@ function TaskDetails({
 
       <div className="flex flex-1 flex-col gap-6 overflow-y-auto px-4 py-5">
         <div className="flex flex-col gap-2">
-          <label htmlFor={titleId} className="text-sm font-semibold">
+          <label htmlFor={titleId} className={SECTION_LABEL}>
             Title
           </label>
           <input
@@ -161,9 +162,9 @@ function TaskDetails({
 
         <ChoiceGroup label="Type">
           {TASK_TYPES.map((type) => (
-            <Chip
+            <TypeChip
               key={type}
-              label={TASK_TYPE_LABELS[type]}
+              type={type}
               selected={task.type === type}
               onClick={() => updateTask(task.id, { type })}
             />
@@ -171,7 +172,7 @@ function TaskDetails({
         </ChoiceGroup>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor={deadlineId} className="text-sm font-semibold">
+          <label htmlFor={deadlineId} className={SECTION_LABEL}>
             Deadline
           </label>
           <div className="flex gap-2">
@@ -197,7 +198,7 @@ function TaskDetails({
         </div>
 
         <div className="flex flex-col gap-2">
-          <label htmlFor={notesId} className="text-sm font-semibold">
+          <label htmlFor={notesId} className={SECTION_LABEL}>
             Notes
           </label>
           <textarea
@@ -240,8 +241,8 @@ function ChoiceGroup({
 }) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className="mb-2 text-sm font-semibold">{label}</legend>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <legend className={`mb-2 ${SECTION_LABEL}`}>{label}</legend>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
     </fieldset>
   );
 }

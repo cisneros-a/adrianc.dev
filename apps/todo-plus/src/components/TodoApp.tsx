@@ -11,6 +11,7 @@ import {
 import { useTasks } from "@/lib/tasks/store";
 import { FilterBar } from "./FilterBar";
 import { QuickAdd } from "./QuickAdd";
+import { SECTION_LABEL } from "./styles";
 import { TaskItem } from "./TaskItem";
 import { TaskPanel } from "./TaskPanel";
 
@@ -50,16 +51,24 @@ export function TodoApp() {
               body="Try removing a filter."
             />
           ) : (
-            <ul className="flex flex-col gap-2">
-              {visible.map((task) => (
-                <TaskItem
-                  key={task.id}
-                  task={task}
-                  today={today}
-                  onOpen={() => setOpenTaskId(task.id)}
-                />
-              ))}
-            </ul>
+            <section
+              aria-labelledby="tasks-heading"
+              className="flex flex-col gap-3"
+            >
+              <h2 id="tasks-heading" className={SECTION_LABEL}>
+                Tasks
+              </h2>
+              <ul className="flex flex-col gap-2.5">
+                {visible.map((task) => (
+                  <TaskItem
+                    key={task.id}
+                    task={task}
+                    today={today}
+                    onOpen={() => setOpenTaskId(task.id)}
+                  />
+                ))}
+              </ul>
+            </section>
           )}
         </>
       )}

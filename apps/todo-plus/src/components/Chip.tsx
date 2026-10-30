@@ -13,7 +13,7 @@ export function Chip({ label, selected, onClick }: ChipProps) {
       type="button"
       aria-pressed={selected}
       onClick={onClick}
-      className={`min-h-10 rounded-full border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
+      className={`min-h-9 rounded-full border px-2.5 text-[13px] font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent ${
         selected
           ? "border-accent bg-accent text-accent-foreground"
           : "border-border bg-surface text-foreground hover:bg-surface-muted"

@@ -3,77 +3,110 @@
 /*
  * Theme tokens (TD13): every color is defined once for light and once for dark.
  * Components use the token names (bg-surface, text-muted, ...), never raw colors.
+ * Palette: warm neutrals with a sparing orange accent (TD16).
  *
  * Which set applies (TD12):
  * - data-theme="light" or "dark" on <html>: the user's choice from the toggle
  * - no data-theme: follow the device setting (prefers-color-scheme)
+ *
+ * Contrast (CLAUDE.md accessibility): text colors are at least 4.5:1 on the
+ * surfaces they sit on. --accent-decor is decoration only (about 3:1), never text.
  */
 
 :root {
   color-scheme: light;
-  --background: #f4f4f5;
+  --background: #f6f5f3;
   --surface: #ffffff;
-  --surface-muted: #ececef;
-  --foreground: #18181b;
-  --muted: #5f5f68;
-  --border: #dcdce0;
-  --accent: #4f46e5;
+  --surface-muted: #eae9e7;
+  --foreground: #252422;
+  --muted: #6f6c68;
+  --border: #e6e3df;
+  --accent: #b84f19;
   --accent-foreground: #ffffff;
-  --danger: #c81e1e;
-  --priority-low-bg: #eef2f6;
-  --priority-low-fg: #475569;
-  --priority-medium-bg: #e0f2fe;
-  --priority-medium-fg: #075985;
-  --priority-high-bg: #fef3c7;
-  --priority-high-fg: #92400e;
-  --priority-urgent-bg: #fee2e2;
-  --priority-urgent-fg: #b91c1c;
+  --accent-decor: #e87033;
+  --danger: #bd3a1f;
+  --priority-low-bg: #efedea;
+  --priority-low-fg: #5e5a55;
+  --priority-medium-bg: #e3ecfb;
+  --priority-medium-fg: #2d4fb8;
+  --priority-high-bg: #fdf0d2;
+  --priority-high-fg: #855400;
+  --priority-urgent-bg: #fbe3dd;
+  --priority-urgent-fg: #b3341a;
+  /* Task type colors (TD17), shown as the edge on the right of each task card. */
+  --type-work: #4165de;
+  --type-personal: #d6409f;
+  --type-school: #03a1c5;
+  --type-errands: #ffcb17;
+  /* Darker shades of the same hues for text on a 25% type tint, on any background (4.6:1 or more). */
+  --type-work-text: #3452b3;
+  --type-personal-text: #9a2e72;
+  --type-school-text: #02657d;
+  --type-errands-text: #7f660b;
 }
 
 /* Dark tokens, used when the device prefers dark and the user hasn't picked light... */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #0b0b0d;
-    --surface: #17171a;
-    --surface-muted: #232328;
-    --foreground: #ececef;
-    --muted: #a1a1aa;
-    --border: #2f2f35;
-    --accent: #8b93f8;
-    --accent-foreground: #0b0b0d;
-    --danger: #f87171;
-    --priority-low-bg: #1e2633;
-    --priority-low-fg: #cbd5e1;
-    --priority-medium-bg: #0c3a57;
-    --priority-medium-fg: #bae6fd;
-    --priority-high-bg: #5a2f0c;
-    --priority-high-fg: #fde68a;
-    --priority-urgent-bg: #6b1a1a;
-    --priority-urgent-fg: #fecaca;
+    --background: #151413;
+    --surface: #1e1c1b;
+    --surface-muted: #2a2826;
+    --foreground: #f3f1ee;
+    --muted: #a8a39d;
+    --border: #33302d;
+    --accent: #f08a52;
+    --accent-foreground: #1a0f08;
+    --accent-decor: #f59a66;
+    --danger: #f2775c;
+    --priority-low-bg: #2a2725;
+    --priority-low-fg: #cfc9c3;
+    --priority-medium-bg: #1c2b52;
+    --priority-medium-fg: #b9cbff;
+    --priority-high-bg: #46350c;
+    --priority-high-fg: #fbd98a;
+    --priority-urgent-bg: #4f1d14;
+    --priority-urgent-fg: #ffb4a3;
+    --type-work: #6b8cff;
+    --type-personal: #ec6bbd;
+    --type-school: #22c3e6;
+    --type-errands: #ffd84d;
+    --type-work-text: #85a0ff;
+    --type-personal-text: #ef81c7;
+    --type-school-text: #22c3e6;
+    --type-errands-text: #ffd84d;
   }
 }
 
 /* ...and when the user has picked dark (keep in sync with the block above). */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0b0b0d;
-  --surface: #17171a;
-  --surface-muted: #232328;
-  --foreground: #ececef;
-  --muted: #a1a1aa;
-  --border: #2f2f35;
-  --accent: #8b93f8;
-  --accent-foreground: #0b0b0d;
-  --danger: #f87171;
-  --priority-low-bg: #1e2633;
-  --priority-low-fg: #cbd5e1;
-  --priority-medium-bg: #0c3a57;
-  --priority-medium-fg: #bae6fd;
-  --priority-high-bg: #5a2f0c;
-  --priority-high-fg: #fde68a;
-  --priority-urgent-bg: #6b1a1a;
-  --priority-urgent-fg: #fecaca;
+  --background: #151413;
+  --surface: #1e1c1b;
+  --surface-muted: #2a2826;
+  --foreground: #f3f1ee;
+  --muted: #a8a39d;
+  --border: #33302d;
+  --accent: #f08a52;
+  --accent-foreground: #1a0f08;
+  --accent-decor: #f59a66;
+  --danger: #f2775c;
+  --priority-low-bg: #2a2725;
+  --priority-low-fg: #cfc9c3;
+  --priority-medium-bg: #1c2b52;
+  --priority-medium-fg: #b9cbff;
+  --priority-high-bg: #46350c;
+  --priority-high-fg: #fbd98a;
+  --priority-urgent-bg: #4f1d14;
+  --priority-urgent-fg: #ffb4a3;
+  --type-work: #6b8cff;
+  --type-personal: #ec6bbd;
+  --type-school: #22c3e6;
+  --type-errands: #ffd84d;
+  --type-work-text: #85a0ff;
+  --type-personal-text: #ef81c7;
+  --type-school-text: #22c3e6;
+  --type-errands-text: #ffd84d;
 }
 
 @theme inline {
@@ -85,6 +118,7 @@
   --color-border: var(--border);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
+  --color-accent-decor: var(--accent-decor);
   --color-danger: var(--danger);
   --color-priority-low-bg: var(--priority-low-bg);
   --color-priority-low-fg: var(--priority-low-fg);
@@ -94,6 +128,14 @@
   --color-priority-high-fg: var(--priority-high-fg);
   --color-priority-urgent-bg: var(--priority-urgent-bg);
   --color-priority-urgent-fg: var(--priority-urgent-fg);
+  --color-type-work: var(--type-work);
+  --color-type-personal: var(--type-personal);
+  --color-type-school: var(--type-school);
+  --color-type-errands: var(--type-errands);
+  --color-type-work-text: var(--type-work-text);
+  --color-type-personal-text: var(--type-personal-text);
+  --color-type-school-text: var(--type-school-text);
+  --color-type-errands-text: var(--type-errands-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
