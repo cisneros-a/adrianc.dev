@@ -43,6 +43,8 @@
   --type-personal-text: #9a2e72;
   --type-school-text: #02657d;
   --type-errands-text: #7f660b;
+  /* Dims the page behind the open filter panel. */
+  --scrim: rgb(0 0 0 / 0.2);
 }
 
 /* Dark tokens, used when the device prefers dark and the user hasn't picked light... */
@@ -75,6 +77,7 @@
     --type-personal-text: #ef81c7;
     --type-school-text: #22c3e6;
     --type-errands-text: #ffd84d;
+    --scrim: rgb(0 0 0 / 0.45);
   }
 }
 
@@ -107,6 +110,7 @@
   --type-personal-text: #ef81c7;
   --type-school-text: #22c3e6;
   --type-errands-text: #ffd84d;
+  --scrim: rgb(0 0 0 / 0.45);
 }
 
 @theme inline {
@@ -136,6 +140,7 @@
   --color-type-personal-text: var(--type-personal-text);
   --color-type-school-text: var(--type-school-text);
   --color-type-errands-text: var(--type-errands-text);
+  --color-scrim: var(--scrim);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -145,7 +150,8 @@ body {
   color: var(--foreground);
 }
 
-/* Stop the list scrolling behind the open detail panel. */
-html:has(dialog[open]) {
+/* Stop the page scrolling behind the open detail panel or filter panel. */
+html:has(dialog[open]),
+html:has([data-filters-open]) {
   overflow: hidden;
 }
