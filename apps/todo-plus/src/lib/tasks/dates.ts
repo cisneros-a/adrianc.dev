@@ -34,7 +34,7 @@ function parseKey(key: string): Date {
   return new Date(year, month - 1, day);
 }
 
-function daysBetween(from: string, to: string): number {
+export function daysBetween(from: string, to: string): number {
   const ms = parseKey(to).getTime() - parseKey(from).getTime();
   return Math.round(ms / 86_400_000);
 }

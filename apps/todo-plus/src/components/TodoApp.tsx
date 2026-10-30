@@ -24,7 +24,7 @@ export function TodoApp() {
   const [today] = useState(todayKey);
 
   const openTask = tasks?.find((task) => task.id === openTaskId) ?? null;
-  const visible = tasks ? sortTasks(filterTasks(tasks, filters)) : [];
+  const visible = tasks ? sortTasks(filterTasks(tasks, filters, today)) : [];
 
   return (
     <div className="flex flex-col gap-4">
