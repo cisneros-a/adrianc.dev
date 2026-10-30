@@ -39,6 +39,8 @@ export type Task = {
   status: Status;
   /** Calendar date as "YYYY-MM-DD" in the user's local time, or null for no deadline. */
   deadline: string | null;
+  /** ISO timestamp of when the task was last marked done, or null when it isn't done. Managed by the store. */
+  completedOn: string | null;
   /** ISO timestamps. */
   createdAt: string;
   updatedAt: string;
@@ -51,13 +53,14 @@ export type TaskChanges = Partial<
 
 export const DEFAULT_TASK: Pick<
   Task,
-  "notes" | "priority" | "type" | "status" | "deadline"
+  "notes" | "priority" | "type" | "status" | "deadline" | "completedOn"
 > = {
   notes: "",
   priority: "medium",
   type: "personal",
   status: "todo",
   deadline: null,
+  completedOn: null,
 };
 
 export function isPriority(value: unknown): value is Priority {

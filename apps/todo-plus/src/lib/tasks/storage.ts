@@ -12,7 +12,9 @@ export function loadTasks(): Task[] {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed.filter(isTask) : [];
+    return Array.isArray(parsed)
+      ? parsed.map(withCompletedOn).filter(isTask)
+      : [];
   } catch {
     // Storage unavailable (e.g. blocked by the browser) or corrupted data.
     return [];
@@ -32,6 +34,14 @@ export function isTasksStorageKey(key: string | null): boolean {
   return key === STORAGE_KEY;
 }
 
+/** Data saved before `completedOn` existed: done tasks get their `updatedAt`, others null (TD25). */
+function withCompletedOn(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) return value;
+  const t = value as Record<string, unknown>;
+  if ("completedOn" in t) return value;
+  return { ...t, completedOn: t.status === "done" ? t.updatedAt : null };
+}
+
 /** Saved data comes from outside the app, so check its shape before trusting it. */
 function isTask(value: unknown): value is Task {
   if (typeof value !== "object" || value === null) return false;
@@ -44,6 +54,7 @@ function isTask(value: unknown): value is Task {
     isTaskType(t.type) &&
     isStatus(t.status) &&
     (t.deadline === null || typeof t.deadline === "string") &&
+    (t.completedOn === null || typeof t.completedOn === "string") &&
     typeof t.createdAt === "string" &&
     typeof t.updatedAt === "string"
   );
