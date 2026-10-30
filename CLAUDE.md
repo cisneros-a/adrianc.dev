@@ -76,6 +76,7 @@ Short descriptions of each tool and its role here. Add entries as new tools come
 - **Corepack** — a tool that ships with Node.js and runs the exact pnpm version pinned in the root `package.json` (`packageManager` field), so everyone uses the same version.
 - **ESLint / Prettier** — ESLint flags likely bugs and bad patterns. Prettier formats code automatically.
 - **Git / GitHub** — Git tracks changes to the code. GitHub hosts the repo online.
+- **Subagent (Sonnet)** — a separate Claude session started with a written task, which does the work and reports back. Phase 3 of the feature workflow runs on Sonnet: cheaper and faster than Opus and good at following a clear plan, but weaker on judgment calls and tricky bugs, so it stops and reports when the plan doesn't fit.
 
 ## Repository layout
 
@@ -173,3 +174,16 @@ Run `build` before calling a change done. `next dev` allows things that static e
 - Ask before deploying, changing DNS or Cloudflare settings, or pushing to `main`.
 - Verify changes locally (`build`, and `preview` when deploy config changed) before calling them done.
 - When adding an app, a tool or a decision, update this file in the same change.
+
+### Feature workflow
+
+Every feature or change to an app goes through these five phases, in order. Stop at the end of each phase marked **(stop)** and wait for Adrian before moving on. Don't build, fix or redesign anything that the current phase doesn't cover; if something comes up, raise it instead of acting on it.
+
+1. **Discuss & design (stop).** Talk through the problem, options with pros and cons, and edge cases; make mockups when the change is visual. No code changes. End with the agreed requirements and design decisions written out.
+2. **Plan (stop).** List exactly which files change, what changes in each, in what order, and how it will be tested: lint, typecheck, build, plus the specific checks in the browser at phone width (375px) and in light and dark. The plan must stand on its own, because phase 3 doesn't see this conversation.
+3. **Execute & test.** A subagent running Sonnet carries out the plan and runs the tests. If any step doesn't work as planned, it stops and reports instead of improvising a different design. It ends with a report: files changed, test results, problems, and anything it did differently from the plan.
+4. **Review (stop).** A light review, then Adrian's own review:
+   - Claude reads the diff against the plan and the decisions, and spot-checks one or two things in the browser. Don't re-run checks the subagent already passed unless its report shows a problem.
+   - Claude summarizes what was built and anything that differs from the plan, then Adrian reviews the app.
+   - Anything off goes back to phase 1 or 3.
+5. **PR.** Record new decisions in the app's README, commit, push, and open a PR. Adrian merges.
