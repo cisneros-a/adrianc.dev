@@ -7,7 +7,6 @@ import {
   type TaskType,
 } from "@/lib/tasks/model";
 import { formatDeadline, isOverdue } from "@/lib/tasks/dates";
-import { updateTask } from "@/lib/tasks/store";
 import { PriorityBadge } from "./PriorityBadge";
 
 // A solid strip of the task type's color on the right of the card (TD17).
@@ -23,10 +22,11 @@ type TaskItemProps = {
   task: Task;
   today: string;
   onOpen: () => void;
+  onToggleDone: () => void;
 };
 
 /** One row: a checkbox to mark it done, and the rest of the row opens the detail panel (T3). */
-export function TaskItem({ task, today, onOpen }: TaskItemProps) {
+export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
   const done = task.status === "done";
   const overdue =
     !done && task.deadline !== null && isOverdue(task.deadline, today);
@@ -40,9 +40,7 @@ export function TaskItem({ task, today, onOpen }: TaskItemProps) {
           type="checkbox"
           aria-label={`Mark “${task.title}” as done`}
           checked={done}
-          onChange={() =>
-            updateTask(task.id, { status: done ? "todo" : "done" })
-          }
+          onChange={onToggleDone}
           className="size-5 accent-accent"
         />
       </label>

@@ -143,6 +143,17 @@
   --color-scrim: var(--scrim);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+
+  /* Undo flag slide-in (TD27). */
+  --animate-flag-in: flag-in 200ms ease-out;
+  @keyframes flag-in {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
 }
 
 body {

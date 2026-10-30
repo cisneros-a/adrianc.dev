@@ -64,9 +64,18 @@ export function addTask(title: string): Task {
 export function updateTask(id: string, changes: TaskChanges): void {
   const now = new Date().toISOString();
   setTasks(
-    getTasks().map((task) =>
-      task.id === id ? { ...task, ...changes, updatedAt: now } : task,
-    ),
+    getTasks().map((task) => {
+      if (task.id !== id) return task;
+      // Track when a task became done (TD25); other edits keep the old value.
+      const statusChanged =
+        changes.status !== undefined && changes.status !== task.status;
+      const completedOn = statusChanged
+        ? changes.status === "done"
+          ? now
+          : null
+        : task.completedOn;
+      return { ...task, ...changes, completedOn, updatedAt: now };
+    }),
   );
 }
 
