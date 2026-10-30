@@ -7,7 +7,6 @@ import {
   STATUSES,
   STATUS_LABELS,
   TASK_TYPES,
-  TASK_TYPE_LABELS,
 } from "@/lib/tasks/model";
 import {
   NO_FILTERS,
@@ -15,6 +14,7 @@ import {
   type Filters,
 } from "@/lib/tasks/filters";
 import { Chip } from "./Chip";
+import { TypeChip } from "./TypeChip";
 import { SECTION_LABEL } from "./styles";
 
 type FilterBarProps = {
@@ -85,9 +85,9 @@ export function FilterBar({ filters, onChange, shown, total }: FilterBarProps) {
           </FilterGroup>
           <FilterGroup label="Type">
             {TASK_TYPES.map((type) => (
-              <Chip
+              <TypeChip
                 key={type}
-                label={TASK_TYPE_LABELS[type]}
+                type={type}
                 selected={filters.types.includes(type)}
                 onClick={() => toggle("types", type)}
               />
