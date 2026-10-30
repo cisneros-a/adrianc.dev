@@ -242,7 +242,7 @@ function ChoiceGroup({
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className={`mb-2 ${SECTION_LABEL}`}>{label}</legend>
-      <div className="flex flex-wrap gap-2">{children}</div>
+      <div className="flex flex-wrap gap-1.5">{children}</div>
     </fieldset>
   );
 }

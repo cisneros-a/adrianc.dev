@@ -38,11 +38,11 @@
   --type-personal: #d6409f;
   --type-school: #03a1c5;
   --type-errands: #ffcb17;
-  /* Darker shades of the same hues for text on a type tint (4.5:1 or more). */
-  --type-work-text: #3c5ece;
-  --type-personal-text: #af3482;
-  --type-school-text: #02728c;
-  --type-errands-text: #876c0c;
+  /* Darker shades of the same hues for text on a 25% type tint, on any background (4.6:1 or more). */
+  --type-work-text: #3452b3;
+  --type-personal-text: #9a2e72;
+  --type-school-text: #02657d;
+  --type-errands-text: #7f660b;
 }
 
 /* Dark tokens, used when the device prefers dark and the user hasn't picked light... */
@@ -71,8 +71,8 @@
     --type-personal: #ec6bbd;
     --type-school: #22c3e6;
     --type-errands: #ffd84d;
-    --type-work-text: #7191ff;
-    --type-personal-text: #ec6bbd;
+    --type-work-text: #85a0ff;
+    --type-personal-text: #ef81c7;
     --type-school-text: #22c3e6;
     --type-errands-text: #ffd84d;
   }
@@ -103,8 +103,8 @@
   --type-personal: #ec6bbd;
   --type-school: #22c3e6;
   --type-errands: #ffd84d;
-  --type-work-text: #7191ff;
-  --type-personal-text: #ec6bbd;
+  --type-work-text: #85a0ff;
+  --type-personal-text: #ef81c7;
   --type-school-text: #22c3e6;
   --type-errands-text: #ffd84d;
 }
