@@ -6,14 +6,15 @@ import { todayKey } from "@/lib/tasks/dates";
 import {
   NO_FILTERS,
   filterTasks,
+  searchTasks,
   sortCompletedTasks,
   sortOpenTasks,
   type Filters,
 } from "@/lib/tasks/filters";
-import { updateTask, useTasks } from "@/lib/tasks/store";
+import { deleteTask, updateTask, useTasks } from "@/lib/tasks/store";
 import { CompletedSection } from "./CompletedSection";
 import { FilterBar } from "./FilterBar";
-import { QuickAdd } from "./QuickAdd";
+import { SearchAddBar } from "./SearchAddBar";
 import { SECTION_LABEL } from "./styles";
 import { TaskItem } from "./TaskItem";
 import { TaskPanel } from "./TaskPanel";
@@ -21,6 +22,10 @@ import { UndoToast } from "./UndoToast";
 
 /** How long a task checked off stays in place, struck through, before moving to Completed (T11). */
 const HOLD_MS = 2000;
+
+type UndoState =
+  | { action: "completed"; id: string; title: string; previous: Status }
+  | { action: "added"; id: string; title: string };
 
 /** The whole app below the header: add, filter, list, and the detail panel. */
 export function TodoApp() {
@@ -34,11 +39,10 @@ export function TodoApp() {
   // Tasks checked off within the last HOLD_MS, mapped to the status they had before (T11).
   const [held, setHeld] = useState<Map<string, Status>>(new Map());
   const holdTimers = useRef<Map<string, number>>(new Map());
-  const [undo, setUndo] = useState<{
-    id: string;
-    title: string;
-    previous: Status;
-  } | null>(null);
+  const [undo, setUndo] = useState<UndoState | null>(null);
+  // The box at the top: a search (T16) or a new task's title in add mode (T17).
+  const [text, setText] = useState("");
+  const [adding, setAdding] = useState(false);
 
   useEffect(() => {
     const timers = holdTimers.current;
@@ -67,20 +71,49 @@ export function TodoApp() {
         task.id,
         window.setTimeout(() => release(task.id), HOLD_MS),
       );
-      setUndo({ id: task.id, title: task.title, previous: task.status });
+      setUndo({
+        action: "completed",
+        id: task.id,
+        title: task.title,
+        previous: task.status,
+      });
       return;
     }
     const previous = held.get(task.id);
     updateTask(task.id, { status: previous ?? "todo" });
     release(task.id);
-    setUndo((current) => (current?.id === task.id ? null : current));
+    setUndo((current) =>
+      current?.action === "completed" && current.id === task.id
+        ? null
+        : current,
+    );
   }
 
   function handleUndo() {
     if (!undo) return;
-    updateTask(undo.id, { status: undo.previous });
-    release(undo.id);
+    if (undo.action === "completed") {
+      updateTask(undo.id, { status: undo.previous });
+      release(undo.id);
+    } else {
+      deleteTask(undo.id);
+      if (openTaskId === undo.id) setOpenTaskId(null);
+    }
     setUndo(null);
+  }
+
+  function handleAdded(task: Task) {
+    setUndo({ action: "added", id: task.id, title: task.title });
+  }
+
+  // Searching only done tasks opens Completed, like filtering on Done (TD33).
+  function handleTextChange(next: string) {
+    setText(next);
+    if (!adding && next.trim() !== "" && tasks !== null) {
+      const matches = searchTasks(filterTasks(tasks, filters, today), next);
+      if (matches.length > 0 && matches.every((t) => t.status === "done")) {
+        setCompletedOpen(true);
+      }
+    }
   }
 
   function handleFiltersChange(next: Filters) {
@@ -100,7 +133,9 @@ export function TodoApp() {
       ? { ...task, status: previous }
       : task;
   });
-  const visible = filterTasks(asShown, filters, today);
+  // In add mode the box holds a new title, so the list ignores it (TD39).
+  const query = adding ? "" : text;
+  const visible = searchTasks(filterTasks(asShown, filters, today), query);
   const realById = new Map((tasks ?? []).map((task) => [task.id, task]));
   const open = sortOpenTasks(visible.filter((t) => t.status !== "done")).map(
     (t) => realById.get(t.id) ?? t,
@@ -111,15 +146,18 @@ export function TodoApp() {
 
   return (
     <div className="flex flex-col gap-4 pb-24">
-      <QuickAdd />
+      <SearchAddBar
+        text={text}
+        onTextChange={handleTextChange}
+        adding={adding}
+        onAddingChange={setAdding}
+        onAdded={handleAdded}
+      />
 
       {tasks === null ? (
         <p className="py-12 text-center text-muted">Loading tasks…</p>
       ) : tasks.length === 0 ? (
-        <EmptyState
-          title="No tasks yet"
-          body="Add your first task above, then tap it to set a priority, type and deadline."
-        />
+        <EmptyState title="No tasks yet" body="Tap + to add your first task." />
       ) : (
         <>
           <FilterBar
@@ -127,11 +165,12 @@ export function TodoApp() {
             onChange={handleFiltersChange}
             shown={visible.length}
             total={tasks.length}
+            searching={query.trim() !== ""}
           />
           {visible.length === 0 ? (
             <EmptyState
               title="No matching tasks"
-              body="Try removing a filter."
+              body="Try a different search or remove a filter."
             />
           ) : (
             <>
