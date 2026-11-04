@@ -24,13 +24,20 @@ type FilterBarProps = {
   onChange: (filters: Filters) => void;
   shown: number;
   total: number;
+  searching: boolean;
 };
 
 /**
  * Filters by status, priority, type and deadline (T2), collapsed by default to save space on phones (T8).
  * The open panel floats over the list (the list doesn't move) with a scrim dimming the page behind it.
  */
-export function FilterBar({ filters, onChange, shown, total }: FilterBarProps) {
+export function FilterBar({
+  filters,
+  onChange,
+  shown,
+  total,
+  searching,
+}: FilterBarProps) {
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -86,7 +93,9 @@ export function FilterBar({ filters, onChange, shown, total }: FilterBarProps) {
             Filters{active > 0 ? ` (${active})` : ""} {open ? "▴" : "▾"}
           </button>
           <p className="text-sm text-muted" aria-live="polite">
-            {active > 0 ? `${shown} of ${total} tasks` : `${total} tasks`}
+            {active > 0 || searching
+              ? `${shown} of ${total} tasks`
+              : `${total} tasks`}
           </p>
         </div>
 

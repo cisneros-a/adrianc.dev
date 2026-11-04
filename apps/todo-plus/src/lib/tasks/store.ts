@@ -48,12 +48,15 @@ export function useTasks(): Task[] | null {
   return useSyncExternalStore(subscribe, getTasks, getServerSnapshot);
 }
 
-export function addTask(title: string): Task {
+/** Adds a task with the default details, overridden by any `details` given (T17). */
+export function addTask(title: string, details: TaskChanges = {}): Task {
   const now = new Date().toISOString();
   const task: Task = {
     ...DEFAULT_TASK,
+    ...details,
     id: crypto.randomUUID(),
     title,
+    completedOn: null,
     createdAt: now,
     updatedAt: now,
   };

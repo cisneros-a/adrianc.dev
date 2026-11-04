@@ -1,4 +1,4 @@
-// Filtering (T2) and ordering (TD15, TD26). Pure functions: no storage, no React.
+// Filtering (T2), search (T16) and ordering (TD15, TD26). Pure functions: no storage, no React.
 
 import {
   PRIORITIES,
@@ -62,6 +62,17 @@ export function filterTasks(
       matches(filters.types, task.type) &&
       matches(filters.statuses, task.status) &&
       matchesDeadline(filters.deadlines, task, today),
+  );
+}
+
+/** Keeps tasks whose title or notes contain the text, ignoring case (T16, TD31). Empty text keeps all. */
+export function searchTasks(tasks: Task[], query: string): Task[] {
+  const needle = query.trim().toLowerCase();
+  if (needle === "") return tasks;
+  return tasks.filter(
+    (task) =>
+      task.title.toLowerCase().includes(needle) ||
+      task.notes.toLowerCase().includes(needle),
   );
 }
 
