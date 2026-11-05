@@ -195,7 +195,7 @@ export function SearchAddBar({
         {/* -mx-1 px-1 leaves room so focus rings at the edges aren't clipped. */}
         <div className="-mx-1 min-h-0 overflow-hidden px-1">
           <div className="mt-4 flex flex-col gap-5 border-b border-border pb-5">
-            <ChoiceGroup label="Priority">
+            <ChoiceGroup label="Priority" required>
               {PRIORITIES.map((value) => (
                 <Chip
                   key={value}
@@ -206,7 +206,7 @@ export function SearchAddBar({
               ))}
             </ChoiceGroup>
 
-            <ChoiceGroup label="Type">
+            <ChoiceGroup label="Type" required>
               {TASK_TYPES.map((value) => (
                 <TypeChip
                   key={value}
@@ -288,14 +288,27 @@ function SearchIcon({ className }: { className: string }) {
 
 function ChoiceGroup({
   label,
+  required = false,
   children,
 }: {
   label: string;
+  /** Marks the field as required with an orange asterisk (TD52). */
+  required?: boolean;
   children: React.ReactNode;
 }) {
   return (
     <fieldset className="flex flex-col gap-2">
-      <legend className={`mb-2 ${SECTION_LABEL}`}>{label}</legend>
+      <legend className={`mb-2 ${SECTION_LABEL}`}>
+        {label}
+        {required && (
+          <>
+            <span aria-hidden="true" className="ml-0.5 text-accent">
+              *
+            </span>
+            <span className="sr-only"> (required)</span>
+          </>
+        )}
+      </legend>
       <div className="flex flex-wrap gap-1.5">{children}</div>
     </fieldset>
   );
