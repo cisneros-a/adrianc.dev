@@ -38,3 +38,14 @@ export function daysBetween(from: string, to: string): number {
   const ms = parseKey(to).getTime() - parseKey(from).getTime();
   return Math.round(ms / 86_400_000);
 }
+
+/** Milliseconds from now until the next local midnight, when "today" changes (TD49). */
+export function msUntilMidnight(): number {
+  const now = new Date();
+  const midnight = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1,
+  );
+  return midnight.getTime() - Date.now();
+}

@@ -1,12 +1,6 @@
-// Filtering (T2), search (T16) and ordering (TD15, TD26). Pure functions: no storage, no React.
+// Filtering (T2) and search (T16). Sorting is in sorting.ts. Pure functions: no storage, no React.
 
-import {
-  PRIORITIES,
-  type Priority,
-  type Status,
-  type Task,
-  type TaskType,
-} from "./model";
+import { type Priority, type Status, type Task, type TaskType } from "./model";
 import { daysBetween } from "./dates";
 
 export const DEADLINE_RANGES = [
@@ -106,30 +100,4 @@ function matchesDeadline(
         return days >= 0 && days <= 30;
     }
   });
-}
-
-/** Open tasks: soonest deadline (none last), then highest priority, then oldest. */
-export function sortOpenTasks(tasks: Task[]): Task[] {
-  return [...tasks].sort(
-    (a, b) =>
-      compareDeadlines(a.deadline, b.deadline) ||
-      PRIORITIES.indexOf(b.priority) - PRIORITIES.indexOf(a.priority) ||
-      a.createdAt.localeCompare(b.createdAt),
-  );
-}
-
-/** Completed tasks: most recently completed first (TD26), then newest created. */
-export function sortCompletedTasks(tasks: Task[]): Task[] {
-  return [...tasks].sort(
-    (a, b) =>
-      (b.completedOn ?? "").localeCompare(a.completedOn ?? "") ||
-      b.createdAt.localeCompare(a.createdAt),
-  );
-}
-
-function compareDeadlines(a: string | null, b: string | null): number {
-  if (a === b) return 0;
-  if (a === null) return 1;
-  if (b === null) return -1;
-  return a.localeCompare(b); // "YYYY-MM-DD" sorts correctly as text
 }
