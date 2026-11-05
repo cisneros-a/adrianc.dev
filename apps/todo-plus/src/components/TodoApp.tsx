@@ -2,22 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { Status, Task } from "@/lib/tasks/model";
-import { todayKey } from "@/lib/tasks/dates";
+import { msUntilMidnight, todayKey } from "@/lib/tasks/dates";
 import {
   NO_FILTERS,
   filterTasks,
   searchTasks,
-  sortCompletedTasks,
-  sortOpenTasks,
   type Filters,
 } from "@/lib/tasks/filters";
+import {
+  DEFAULT_SORT,
+  groupTasks,
+  sortCompletedTasks,
+} from "@/lib/tasks/sorting";
 import { deleteTask, updateTask, useTasks } from "@/lib/tasks/store";
-import { CompletedSection } from "./CompletedSection";
 import { FilterBar } from "./FilterBar";
 import { SearchAddBar } from "./SearchAddBar";
-import { SECTION_LABEL } from "./styles";
-import { TaskItem } from "./TaskItem";
 import { TaskPanel } from "./TaskPanel";
+import { TaskSection } from "./TaskSection";
 import { UndoToast } from "./UndoToast";
 
 /** How long a task checked off stays in place, struck through, before moving to Completed (T11). */
@@ -32,9 +33,10 @@ export function TodoApp() {
   const tasks = useTasks();
   const [filters, setFilters] = useState<Filters>(NO_FILTERS);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
-  // Read once per visit; deadlines are compared against this.
-  const [today] = useState(todayKey);
-
+  // Deadlines are compared against this; it's refreshed after midnight and when the tab comes back (TD49).
+  const [today, setToday] = useState(todayKey);
+  // Due groups the user collapsed; all start open, and nothing is saved (TD48).
+  const [closedGroups, setClosedGroups] = useState<Set<string>>(new Set());
   const [completedOpen, setCompletedOpen] = useState(false);
   // Tasks checked off within the last HOLD_MS, mapped to the status they had before (T11).
   const [held, setHeld] = useState<Map<string, Status>>(new Map());
@@ -43,6 +45,36 @@ export function TodoApp() {
   // The box at the top: a search (T16) or a new task's title in add mode (T17).
   const [text, setText] = useState("");
   const [adding, setAdding] = useState(false);
+
+  useEffect(() => {
+    let timer: number;
+    function refresh() {
+      setToday(todayKey());
+    }
+    function schedule() {
+      timer = window.setTimeout(() => {
+        refresh();
+        schedule();
+      }, msUntilMidnight() + 1000);
+    }
+    function handleVisible() {
+      if (document.visibilityState === "visible") refresh();
+    }
+    schedule();
+    document.addEventListener("visibilitychange", handleVisible);
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener("visibilitychange", handleVisible);
+    };
+  }, []);
+
+  function toggleGroup(id: string) {
+    setClosedGroups((prev) => {
+      const next = new Set(prev);
+      if (!next.delete(id)) next.add(id);
+      return next;
+    });
+  }
 
   useEffect(() => {
     const timers = holdTimers.current;
@@ -137,9 +169,14 @@ export function TodoApp() {
   const query = adding ? "" : text;
   const visible = searchTasks(filterTasks(asShown, filters, today), query);
   const realById = new Map((tasks ?? []).map((task) => [task.id, task]));
-  const open = sortOpenTasks(visible.filter((t) => t.status !== "done")).map(
-    (t) => realById.get(t.id) ?? t,
-  );
+  const groups = groupTasks(
+    visible.filter((t) => t.status !== "done"),
+    DEFAULT_SORT,
+    today,
+  ).map((group) => ({
+    ...group,
+    tasks: group.tasks.map((t) => realById.get(t.id) ?? t),
+  }));
   const completed = sortCompletedTasks(
     visible.filter((t) => t.status === "done"),
   );
@@ -174,29 +211,22 @@ export function TodoApp() {
             />
           ) : (
             <>
-              {open.length > 0 && (
-                <section
-                  aria-labelledby="tasks-heading"
-                  className="flex flex-col gap-3"
-                >
-                  <h2 id="tasks-heading" className={SECTION_LABEL}>
-                    Tasks
-                  </h2>
-                  <ul className="flex flex-col gap-2.5">
-                    {open.map((task) => (
-                      <TaskItem
-                        key={task.id}
-                        task={task}
-                        today={today}
-                        onOpen={() => setOpenTaskId(task.id)}
-                        onToggleDone={() => handleToggleDone(task)}
-                      />
-                    ))}
-                  </ul>
-                </section>
-              )}
+              {groups.map((group) => (
+                <TaskSection
+                  key={group.id}
+                  label={group.label}
+                  tasks={group.tasks}
+                  today={today}
+                  open={!closedGroups.has(group.id)}
+                  onToggleOpen={() => toggleGroup(group.id)}
+                  onOpenTask={setOpenTaskId}
+                  onToggleDone={handleToggleDone}
+                  tone={group.id === "overdue" ? "danger" : undefined}
+                />
+              ))}
               {completed.length > 0 && (
-                <CompletedSection
+                <TaskSection
+                  label="Completed"
                   tasks={completed}
                   today={today}
                   open={completedOpen}
