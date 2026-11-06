@@ -35,9 +35,9 @@ export function TypeIcon({
   return (
     <span
       aria-hidden="true"
-      className={`flex size-4 shrink-0 items-center justify-center rounded-full ${circle} ${className}`}
+      className={`flex size-5 shrink-0 items-center justify-center rounded-full ${circle} ${className}`}
     >
-      <Icon className="size-2.5" aria-hidden="true" />
+      <Icon className="size-3" aria-hidden="true" />
     </span>
   );
 }

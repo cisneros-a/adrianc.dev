@@ -166,3 +166,42 @@ html:has(dialog[open]),
 html:has([data-filters-open]) {
   overflow: hidden;
 }
+
+/* Task modal: fade and slight zoom in and out (TD65). Closing adds data-closing
+   to the <dialog>; the component waits for the animation, then closes it. */
+@media (prefers-reduced-motion: no-preference) {
+  dialog.task-modal[open] {
+    animation: modal-in 150ms ease-out;
+  }
+  dialog.task-modal[open]::backdrop {
+    animation: backdrop-in 150ms ease-out;
+  }
+  dialog.task-modal[data-closing] {
+    animation: modal-out 150ms ease-in forwards;
+  }
+  dialog.task-modal[data-closing]::backdrop {
+    animation: backdrop-out 150ms ease-in forwards;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
