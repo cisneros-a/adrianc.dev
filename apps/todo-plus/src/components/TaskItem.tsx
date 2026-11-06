@@ -1,5 +1,6 @@
 "use client";
 
+import { FileText } from "lucide-react";
 import {
   STATUS_LABELS,
   TASK_TYPE_LABELS,
@@ -51,7 +52,7 @@ export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
       <button
         type="button"
         onClick={onOpen}
-        className="flex min-h-14 min-w-0 flex-1 flex-col items-start gap-1.5 py-3 pr-9 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
+        className="flex min-h-14 min-w-0 flex-1 flex-col items-start gap-1.5 py-3 pr-10 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
       >
         <span
           className={`w-full truncate text-base font-medium ${done ? "text-muted line-through" : ""}`}
@@ -70,7 +71,12 @@ export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
               {formatDeadline(task.deadline, today)}
             </span>
           )}
-          {task.notes.trim() && <span aria-label="Has notes">📝</span>}
+          {task.notes.trim() && (
+            <span className="flex items-center">
+              <FileText className="size-3.5" aria-hidden="true" />
+              <span className="sr-only">Has notes</span>
+            </span>
+          )}
         </span>
       </button>
       {/* pointer-events-none: a tap on the icon opens the task like the rest of the card. */}
