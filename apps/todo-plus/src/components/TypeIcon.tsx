@@ -1,6 +1,6 @@
 import {
-  Book,
   Briefcase,
+  House,
   ShoppingCart,
   User,
   type LucideIcon,
@@ -17,7 +17,7 @@ const TYPE_ICON: Record<TaskType, { Icon: LucideIcon; circle: string }> = {
     Icon: User,
     circle: "bg-type-personal/15 text-type-personal-text",
   },
-  school: { Icon: Book, circle: "bg-type-school/15 text-type-school-text" },
+  home: { Icon: House, circle: "bg-type-home/15 text-type-home-text" },
   errands: {
     Icon: ShoppingCart,
     circle: "bg-type-errands/25 text-type-errands-text",

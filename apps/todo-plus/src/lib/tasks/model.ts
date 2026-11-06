@@ -3,7 +3,7 @@
 export const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 export type Priority = (typeof PRIORITIES)[number];
 
-export const TASK_TYPES = ["work", "personal", "school", "errands"] as const;
+export const TASK_TYPES = ["work", "personal", "home", "errands"] as const;
 export type TaskType = (typeof TASK_TYPES)[number];
 
 export const STATUSES = ["todo", "in_progress", "done"] as const;
@@ -19,7 +19,7 @@ export const PRIORITY_LABELS: Record<Priority, string> = {
 export const TASK_TYPE_LABELS: Record<TaskType, string> = {
   work: "Work",
   personal: "Personal",
-  school: "School",
+  home: "Home",
   errands: "Errands",
 };
 

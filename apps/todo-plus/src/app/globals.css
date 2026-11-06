@@ -36,12 +36,12 @@
   /* Task type colors (TD17), shown as the edge on the right of each task card. */
   --type-work: #4165de;
   --type-personal: #d6409f;
-  --type-school: #03a1c5;
+  --type-home: #03a1c5;
   --type-errands: #ffcb17;
   /* Darker shades of the same hues for text on a 25% type tint, on any background (4.6:1 or more). */
   --type-work-text: #3452b3;
   --type-personal-text: #9a2e72;
-  --type-school-text: #02657d;
+  --type-home-text: #02657d;
   --type-errands-text: #7f660b;
   /* Dims the page behind the open filter panel. */
   --scrim: rgb(0 0 0 / 0.2);
@@ -71,11 +71,11 @@
     --priority-urgent-fg: #ffb4a3;
     --type-work: #6b8cff;
     --type-personal: #ec6bbd;
-    --type-school: #22c3e6;
+    --type-home: #22c3e6;
     --type-errands: #ffd84d;
     --type-work-text: #85a0ff;
     --type-personal-text: #ef81c7;
-    --type-school-text: #22c3e6;
+    --type-home-text: #22c3e6;
     --type-errands-text: #ffd84d;
     --scrim: rgb(0 0 0 / 0.45);
   }
@@ -104,11 +104,11 @@
   --priority-urgent-fg: #ffb4a3;
   --type-work: #6b8cff;
   --type-personal: #ec6bbd;
-  --type-school: #22c3e6;
+  --type-home: #22c3e6;
   --type-errands: #ffd84d;
   --type-work-text: #85a0ff;
   --type-personal-text: #ef81c7;
-  --type-school-text: #22c3e6;
+  --type-home-text: #22c3e6;
   --type-errands-text: #ffd84d;
   --scrim: rgb(0 0 0 / 0.45);
 }
@@ -134,11 +134,11 @@
   --color-priority-urgent-fg: var(--priority-urgent-fg);
   --color-type-work: var(--type-work);
   --color-type-personal: var(--type-personal);
-  --color-type-school: var(--type-school);
+  --color-type-home: var(--type-home);
   --color-type-errands: var(--type-errands);
   --color-type-work-text: var(--type-work-text);
   --color-type-personal-text: var(--type-personal-text);
-  --color-type-school-text: var(--type-school-text);
+  --color-type-home-text: var(--type-home-text);
   --color-type-errands-text: var(--type-errands-text);
   --color-scrim: var(--scrim);
   --font-sans: var(--font-geist-sans);
