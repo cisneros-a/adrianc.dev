@@ -19,10 +19,10 @@ const TYPE_CHIP: Record<
     selected: "bg-type-personal/25",
     hover: "hover:bg-type-personal/12",
   },
-  school: {
-    base: "border-type-school text-type-school-text",
-    selected: "bg-type-school/25",
-    hover: "hover:bg-type-school/12",
+  home: {
+    base: "border-type-home text-type-home-text",
+    selected: "bg-type-home/25",
+    hover: "hover:bg-type-home/12",
   },
   errands: {
     base: "border-type-errands text-type-errands-text",

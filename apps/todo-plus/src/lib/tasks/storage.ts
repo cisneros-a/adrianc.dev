@@ -13,7 +13,7 @@ export function loadTasks(): Task[] {
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed)
-      ? parsed.map(withCompletedOn).filter(isTask)
+      ? parsed.map(withCompletedOn).map(withHomeType).filter(isTask)
       : [];
   } catch {
     // Storage unavailable (e.g. blocked by the browser) or corrupted data.
@@ -40,6 +40,13 @@ function withCompletedOn(value: unknown): unknown {
   const t = value as Record<string, unknown>;
   if ("completedOn" in t) return value;
   return { ...t, completedOn: t.status === "done" ? t.updatedAt : null };
+}
+
+/** Tasks saved while the Home type was called School keep working: "school" becomes "home" (TD67). */
+function withHomeType(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) return value;
+  const t = value as Record<string, unknown>;
+  return t.type === "school" ? { ...t, type: "home" } : value;
 }
 
 /** Saved data comes from outside the app, so check its shape before trusting it. */

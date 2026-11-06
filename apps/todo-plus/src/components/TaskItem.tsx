@@ -16,7 +16,7 @@ import { TypeIcon } from "./TypeIcon";
 const TYPE_EDGE: Record<TaskType, string> = {
   work: "shadow-[4px_0_0_0_var(--color-type-work)]",
   personal: "shadow-[4px_0_0_0_var(--color-type-personal)]",
-  school: "shadow-[4px_0_0_0_var(--color-type-school)]",
+  home: "shadow-[4px_0_0_0_var(--color-type-home)]",
   errands: "shadow-[4px_0_0_0_var(--color-type-errands)]",
 };
 
