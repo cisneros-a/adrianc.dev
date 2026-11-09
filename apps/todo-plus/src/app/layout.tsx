@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { InlineScript } from "@/components/InlineScript";
+import { OG_IMAGE_ALT, OG_IMAGE_SIZE } from "@/lib/og";
 import { THEME_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
 
@@ -14,9 +15,31 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const DESCRIPTION = "A to-do list with priorities, deadlines and task types.";
+
+// Open Graph tags so shared links show a title, description and image
+// (SEO basics in the root CLAUDE.md; TD86). No `twitter` field: Next.js copies
+// these into twitter:* tags on its own.
 export const metadata: Metadata = {
+  metadataBase: new URL("https://todo-plus.adrianc.dev"),
   title: "To Do +",
-  description: "A to-do list with priorities, deadlines and task types.",
+  description: DESCRIPTION,
+  openGraph: {
+    title: "To Do +",
+    description: DESCRIPTION,
+    url: "/",
+    siteName: "To Do +",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/og.png",
+        ...OG_IMAGE_SIZE,
+        alt: OG_IMAGE_ALT,
+        type: "image/png",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
