@@ -29,6 +29,9 @@ export const STATUS_LABELS: Record<Status, string> = {
   done: "Done",
 };
 
+/** A checklist item inside a task: a title and a done checkbox, nothing else (T38, TD68). */
+export type Subtask = { id: string; title: string; done: boolean };
+
 export type Task = {
   id: string;
   title: string;
@@ -41,6 +44,8 @@ export type Task = {
   deadline: string | null;
   /** ISO timestamp of when the task was last marked done, or null when it isn't done. Managed by the store. */
   completedOn: string | null;
+  /** Checklist items, in the order added; one level deep (T38, T39, T47). Changed only through the store's subtask functions. */
+  subtasks: Subtask[];
   /** ISO timestamps. */
   createdAt: string;
   updatedAt: string;
@@ -53,7 +58,13 @@ export type TaskChanges = Partial<
 
 export const DEFAULT_TASK: Pick<
   Task,
-  "notes" | "priority" | "type" | "status" | "deadline" | "completedOn"
+  | "notes"
+  | "priority"
+  | "type"
+  | "status"
+  | "deadline"
+  | "completedOn"
+  | "subtasks"
 > = {
   notes: "",
   priority: "medium",
@@ -61,6 +72,7 @@ export const DEFAULT_TASK: Pick<
   status: "todo",
   deadline: null,
   completedOn: null,
+  subtasks: [],
 };
 
 export function isPriority(value: unknown): value is Priority {
