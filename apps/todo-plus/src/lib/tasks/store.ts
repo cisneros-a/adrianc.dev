@@ -53,8 +53,15 @@ export function useTasks(): Task[] | null {
   return useSyncExternalStore(subscribe, getTasks, getServerSnapshot);
 }
 
-/** Adds a task with the default details, overridden by any `details` given (T17). */
-export function addTask(title: string, details: TaskChanges = {}): Task {
+/**
+ * Adds a task with the default details, overridden by any `details` given
+ * (T17), and with a subtask for each non-empty title in `subtaskTitles` (T42, T49).
+ */
+export function addTask(
+  title: string,
+  details: TaskChanges = {},
+  subtaskTitles: string[] = [],
+): Task {
   const now = new Date().toISOString();
   const task: Task = {
     ...DEFAULT_TASK,
@@ -62,7 +69,10 @@ export function addTask(title: string, details: TaskChanges = {}): Task {
     id: crypto.randomUUID(),
     title,
     completedOn: null,
-    subtasks: [],
+    subtasks: subtaskTitles
+      .map((t) => t.trim())
+      .filter((t) => t !== "")
+      .map((t) => ({ id: crypto.randomUUID(), title: t, done: false })),
     createdAt: now,
     updatedAt: now,
   };

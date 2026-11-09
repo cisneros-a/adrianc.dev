@@ -1,4 +1,4 @@
-import { ThemeToggle } from "@/components/ThemeToggle";
+import { SettingsButton } from "@/components/SettingsButton";
 import { TodoApp } from "@/components/TodoApp";
 
 export default function Home() {
@@ -15,7 +15,7 @@ export default function Home() {
             className="mt-1 h-0.5 w-8 rounded-full bg-accent-decor"
           />
         </div>
-        <ThemeToggle />
+        <SettingsButton />
       </header>
       <TodoApp />
     </main>

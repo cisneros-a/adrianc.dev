@@ -17,7 +17,10 @@ import {
   type TaskType,
 } from "@/lib/tasks/model";
 import { addTask } from "@/lib/tasks/store";
+import type { Template } from "@/lib/templates/model";
+import { saveTemplate, useTemplates } from "@/lib/templates/store";
 import { Chip } from "./Chip";
+import { SubtasksField } from "./SubtasksField";
 import { TypeChip } from "./TypeChip";
 import { SECTION_LABEL } from "./styles";
 
@@ -27,6 +30,7 @@ type SearchAddBarProps = {
   adding: boolean;
   onAddingChange: (adding: boolean) => void;
   onAdded: (task: Task) => void;
+  onTemplateSaved: (result: "saved" | "replaced") => void;
 };
 
 /**
@@ -36,7 +40,11 @@ type SearchAddBarProps = {
  * each add (T18); the type is kept and the other details reset (T19, TD39).
  * The text is shared between modes (T20). Escape clears the search or leaves
  * add mode (TD32). The label floats onto the top border once there's text
- * (T21, T22, TD41). Adding works with Enter or the button (TD37).
+ * (T21, T22, TD41). Adding works with Enter or the button (TD37). The details
+ * include a Subtasks section kept only when the task is added (T48, T49, T50),
+ * a "Templates" chip row at the top that fills the whole form (T55, TD77,
+ * TD84), and "Save as template", which saves without adding the task and
+ * leaves the form filled (T51, TD80); the parent shows the confirmation.
  */
 export function SearchAddBar({
   text,
@@ -44,11 +52,16 @@ export function SearchAddBar({
   adding,
   onAddingChange,
   onAdded,
+  onTemplateSaved,
 }: SearchAddBarProps) {
   const [priority, setPriority] = useState<Priority>(DEFAULT_TASK.priority);
   const [type, setType] = useState<TaskType>(DEFAULT_TASK.type);
   const [deadline, setDeadline] = useState<string | null>(null);
   const [notes, setNotes] = useState("");
+  const [subtasks, setSubtasks] = useState<{ key: string; title: string }[]>(
+    [],
+  );
+  const templates = useTemplates();
   const inputId = useId();
   const deadlineId = useId();
   const notesId = useId();
@@ -61,14 +74,46 @@ export function SearchAddBar({
     event.preventDefault();
     const title = text.trim();
     if (!adding || !title) return;
-    const task = addTask(title, { priority, type, deadline, notes });
+    const task = addTask(
+      title,
+      { priority, type, deadline, notes },
+      subtasks.map((s) => s.title),
+    );
     onAdded(task);
     onTextChange("");
     // Keep the type; everything else goes back to its default (T19).
     setPriority(DEFAULT_TASK.priority);
     setDeadline(null);
     setNotes("");
+    setSubtasks([]);
     inputRef.current?.focus();
+  }
+
+  // Replaces everything in the form, including a typed title; no deadline (T55, TD75).
+  function applyTemplate(template: Template) {
+    onTextChange(template.title);
+    setPriority(template.priority);
+    setType(template.type);
+    setNotes(template.notes);
+    setDeadline(null);
+    setSubtasks(
+      template.subtasks.map((title) => ({ key: crypto.randomUUID(), title })),
+    );
+    inputRef.current?.focus();
+  }
+
+  function handleSaveTemplate() {
+    const title = text.trim();
+    if (!title) return;
+    onTemplateSaved(
+      saveTemplate({
+        title,
+        priority,
+        type,
+        notes,
+        subtasks: subtasks.map((s) => s.title),
+      }),
+    );
   }
 
   function handleKeyDown(event: KeyboardEvent<HTMLFormElement>) {
@@ -195,6 +240,19 @@ export function SearchAddBar({
         {/* -mx-1 px-1 leaves room so focus rings at the edges aren't clipped. */}
         <div className="-mx-1 min-h-0 overflow-hidden px-1">
           <div className="mt-4 flex flex-col gap-5 border-b border-border pb-5">
+            {templates !== null && templates.length > 0 && (
+              <ChoiceGroup label="Templates">
+                {templates.map((template) => (
+                  <Chip
+                    key={template.id}
+                    label={template.title}
+                    selected={false}
+                    onClick={() => applyTemplate(template)}
+                  />
+                ))}
+              </ChoiceGroup>
+            )}
+
             <ChoiceGroup label="Priority" required>
               {PRIORITIES.map((value) => (
                 <Chip
@@ -241,6 +299,24 @@ export function SearchAddBar({
               </div>
             </div>
 
+            <SubtasksField
+              label={
+                subtasks.length === 0
+                  ? "Subtasks"
+                  : `Subtasks · ${subtasks.length}`
+              }
+              items={subtasks}
+              onRemove={(key) =>
+                setSubtasks((current) => current.filter((s) => s.key !== key))
+              }
+              onAdd={(title) =>
+                setSubtasks((current) => [
+                  ...current,
+                  { key: crypto.randomUUID(), title: title.trim() },
+                ])
+              }
+            />
+
             <div className="flex flex-col gap-2">
               <label htmlFor={notesId} className={SECTION_LABEL}>
                 Notes
@@ -255,13 +331,23 @@ export function SearchAddBar({
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={!text.trim()}
-              className="min-h-12 self-end rounded-xl bg-accent px-5 font-semibold text-accent-foreground transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40"
-            >
-              Add task
-            </button>
+            <div className="flex items-center justify-end gap-4">
+              <button
+                type="button"
+                disabled={!text.trim()}
+                onClick={handleSaveTemplate}
+                className="min-h-11 px-2 text-sm font-medium underline underline-offset-4 transition-opacity focus-visible:outline-2 focus-visible:outline-accent disabled:opacity-40"
+              >
+                Save as template
+              </button>
+              <button
+                type="submit"
+                disabled={!text.trim()}
+                className="min-h-12 rounded-xl bg-accent px-5 font-semibold text-accent-foreground transition-opacity focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent disabled:opacity-40"
+              >
+                Add task
+              </button>
+            </div>
           </div>
         </div>
       </div>
