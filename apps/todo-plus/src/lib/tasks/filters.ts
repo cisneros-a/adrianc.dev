@@ -59,14 +59,15 @@ export function filterTasks(
   );
 }
 
-/** Keeps tasks whose title or notes contain the text, ignoring case (T16, TD31). Empty text keeps all. */
+/** Keeps tasks whose title, notes or any subtask title contain the text, ignoring case (T16, T46, TD31). Empty text keeps all. */
 export function searchTasks(tasks: Task[], query: string): Task[] {
   const needle = query.trim().toLowerCase();
   if (needle === "") return tasks;
   return tasks.filter(
     (task) =>
       task.title.toLowerCase().includes(needle) ||
-      task.notes.toLowerCase().includes(needle),
+      task.notes.toLowerCase().includes(needle) ||
+      task.subtasks.some((s) => s.title.toLowerCase().includes(needle)),
   );
 }
 

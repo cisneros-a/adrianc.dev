@@ -13,7 +13,11 @@ export function loadTasks(): Task[] {
     if (!raw) return [];
     const parsed: unknown = JSON.parse(raw);
     return Array.isArray(parsed)
-      ? parsed.map(withCompletedOn).map(withHomeType).filter(isTask)
+      ? parsed
+          .map(withCompletedOn)
+          .map(withHomeType)
+          .map(withSubtasks)
+          .filter(isTask)
       : [];
   } catch {
     // Storage unavailable (e.g. blocked by the browser) or corrupted data.
@@ -49,6 +53,23 @@ function withHomeType(value: unknown): unknown {
   return t.type === "school" ? { ...t, type: "home" } : value;
 }
 
+/** Data saved before subtasks existed: tasks load with an empty list (TD69). */
+function withSubtasks(value: unknown): unknown {
+  if (typeof value !== "object" || value === null) return value;
+  const t = value as Record<string, unknown>;
+  return Array.isArray(t.subtasks) ? value : { ...t, subtasks: [] };
+}
+
+function isSubtask(value: unknown): boolean {
+  if (typeof value !== "object" || value === null) return false;
+  const s = value as Record<string, unknown>;
+  return (
+    typeof s.id === "string" &&
+    typeof s.title === "string" &&
+    typeof s.done === "boolean"
+  );
+}
+
 /** Saved data comes from outside the app, so check its shape before trusting it. */
 function isTask(value: unknown): value is Task {
   if (typeof value !== "object" || value === null) return false;
@@ -62,6 +83,8 @@ function isTask(value: unknown): value is Task {
     isStatus(t.status) &&
     (t.deadline === null || typeof t.deadline === "string") &&
     (t.completedOn === null || typeof t.completedOn === "string") &&
+    Array.isArray(t.subtasks) &&
+    t.subtasks.every(isSubtask) &&
     typeof t.createdAt === "string" &&
     typeof t.updatedAt === "string"
   );

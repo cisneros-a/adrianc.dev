@@ -25,6 +25,8 @@
   --accent-foreground: #ffffff;
   --accent-decor: #e87033;
   --danger: #bd3a1f;
+  /* Completed-subtasks counter (T44); at least 4.5:1 on --surface. */
+  --success: #2e7d32;
   --priority-low-bg: #efedea;
   --priority-low-fg: #5e5a55;
   --priority-medium-bg: #e3ecfb;
@@ -61,6 +63,7 @@
     --accent-foreground: #1a0f08;
     --accent-decor: #f59a66;
     --danger: #f2775c;
+    --success: #6fcf7a;
     --priority-low-bg: #2a2725;
     --priority-low-fg: #cfc9c3;
     --priority-medium-bg: #1c2b52;
@@ -94,6 +97,7 @@
   --accent-foreground: #1a0f08;
   --accent-decor: #f59a66;
   --danger: #f2775c;
+  --success: #6fcf7a;
   --priority-low-bg: #2a2725;
   --priority-low-fg: #cfc9c3;
   --priority-medium-bg: #1c2b52;
@@ -124,6 +128,7 @@
   --color-accent-foreground: var(--accent-foreground);
   --color-accent-decor: var(--accent-decor);
   --color-danger: var(--danger);
+  --color-success: var(--success);
   --color-priority-low-bg: var(--priority-low-bg);
   --color-priority-low-fg: var(--priority-low-fg);
   --color-priority-medium-bg: var(--priority-medium-bg);

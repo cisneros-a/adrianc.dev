@@ -4,7 +4,12 @@
 // Components read it with useTasks(), built on React's useSyncExternalStore.
 
 import { useSyncExternalStore } from "react";
-import { DEFAULT_TASK, type Task, type TaskChanges } from "./model";
+import {
+  DEFAULT_TASK,
+  type Subtask,
+  type Task,
+  type TaskChanges,
+} from "./model";
 import { isTasksStorageKey, loadTasks, saveTasks } from "./storage";
 
 let tasks: Task[] | null = null; // null until first read in the browser
@@ -57,6 +62,7 @@ export function addTask(title: string, details: TaskChanges = {}): Task {
     id: crypto.randomUUID(),
     title,
     completedOn: null,
+    subtasks: [],
     createdAt: now,
     updatedAt: now,
   };
@@ -84,4 +90,45 @@ export function updateTask(id: string, changes: TaskChanges): void {
 
 export function deleteTask(id: string): void {
   setTasks(getTasks().filter((task) => task.id !== id));
+}
+
+/**
+ * Replaces one task's subtasks. Never touches status or completedOn, so ticking
+ * the last subtask doesn't complete the task and completing it leaves the
+ * subtasks alone (T43, T45).
+ */
+function changeSubtasks(
+  taskId: string,
+  change: (subtasks: Subtask[]) => Subtask[],
+): void {
+  const now = new Date().toISOString();
+  setTasks(
+    getTasks().map((task) =>
+      task.id === taskId
+        ? { ...task, subtasks: change(task.subtasks), updatedAt: now }
+        : task,
+    ),
+  );
+}
+
+/** Appends a subtask (T38, T47). Empty titles are ignored. */
+export function addSubtask(taskId: string, title: string): void {
+  const trimmed = title.trim();
+  if (trimmed === "") return;
+  changeSubtasks(taskId, (subtasks) => [
+    ...subtasks,
+    { id: crypto.randomUUID(), title: trimmed, done: false },
+  ]);
+}
+
+export function toggleSubtask(taskId: string, subtaskId: string): void {
+  changeSubtasks(taskId, (subtasks) =>
+    subtasks.map((s) => (s.id === subtaskId ? { ...s, done: !s.done } : s)),
+  );
+}
+
+export function removeSubtask(taskId: string, subtaskId: string): void {
+  changeSubtasks(taskId, (subtasks) =>
+    subtasks.filter((s) => s.id !== subtaskId),
+  );
 }
