@@ -20,7 +20,7 @@ pnpm --filter portfolio build      # static export to out/
 pnpm --filter portfolio preview    # build, then serve out/ with wrangler dev (http://localhost:8787)
 pnpm --filter portfolio lint
 pnpm --filter portfolio typecheck
-pnpm --filter portfolio deploy     # build, then wrangler deploy (see the Deployment section in CLAUDE.md)
+pnpm --filter portfolio run deploy # build, then wrangler deploy (see the Deployment section in CLAUDE.md)
 ```
 
 ## App-specific notes
