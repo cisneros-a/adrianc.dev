@@ -7,7 +7,7 @@ import {
   useThemeChoice,
 } from "@/lib/theme";
 
-/** System / Light / Dark switch (TD12). */
+/** System / Light / Dark switch (TD12), shown inside Settings (T56, TD79). */
 export function ThemeToggle() {
   const choice = useThemeChoice();
 

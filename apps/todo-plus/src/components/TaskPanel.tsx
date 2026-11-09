@@ -1,6 +1,6 @@
 "use client";
 
-import { Plus, X } from "lucide-react";
+import { X } from "lucide-react";
 import { useEffect, useId, useRef, useState } from "react";
 import {
   PRIORITIES,
@@ -20,7 +20,9 @@ import {
   toggleSubtask,
   updateTask,
 } from "@/lib/tasks/store";
+import { saveTemplate } from "@/lib/templates/store";
 import { Chip } from "./Chip";
+import { SubtasksField } from "./SubtasksField";
 import { TypeChip } from "./TypeChip";
 import { SECTION_LABEL } from "./styles";
 
@@ -35,7 +37,7 @@ type TaskPanelProps = {
  * × or a tap outside closes it (T33, TD59, TD62); changes are kept only when
  * Save is tapped (T34, T35, TD60, TD64); closing with unsaved changes asks
  * first (T36, TD61); Delete asks for confirmation and applies right away
- * (TD63). Subtasks are the exception: adding, ticking and removing them save
+ * (TD63). "Save as template" saves the task as last saved (T51, TD81). Subtasks are the exception: adding, ticking and removing them save
  * right away, skip Save and don't count as unsaved changes (TD71). It fades and zooms in and out (TD65). Replaces TD3 (side panel / full
  * screen) and TD14 (save as you type).
  */
@@ -151,6 +153,11 @@ function TaskDetails({
     notes: task.notes,
   });
   const [confirming, setConfirming] = useState(false);
+  // What the "Save as template" link says for 3 seconds after saving (TD82).
+  const [templateResult, setTemplateResult] = useState<
+    "saved" | "replaced" | null
+  >(null);
+  const templateTimer = useRef<number | undefined>(undefined);
   const titleId = useId();
   const notesId = useId();
   const deadlineId = useId();
@@ -200,6 +207,26 @@ function TaskDetails({
       notes: draft.notes,
     });
     onClose();
+  }
+
+  useEffect(() => () => window.clearTimeout(templateTimer.current), []);
+
+  // Uses the task as last saved, not unsaved edits on screen (T51, TD81). The
+  // link text confirms instead of the flag, which the open modal would hide (TD82).
+  function handleSaveTemplate() {
+    const result = saveTemplate({
+      title: task.title,
+      priority: task.priority,
+      type: task.type,
+      notes: task.notes,
+      subtasks: task.subtasks.map((s) => s.title),
+    });
+    setTemplateResult(result);
+    window.clearTimeout(templateTimer.current);
+    templateTimer.current = window.setTimeout(
+      () => setTemplateResult(null),
+      3000,
+    );
   }
 
   function handleDelete() {
@@ -302,7 +329,22 @@ function TaskDetails({
           </div>
         </div>
 
-        <SubtasksEditor task={task} />
+        {/* Subtasks save right away, not with Save (TD70, TD71). The new-subtask text lives in SubtasksField and isn't part of `dirty`. */}
+        <SubtasksField
+          label={
+            task.subtasks.length === 0
+              ? "Subtasks"
+              : `Subtasks · ${task.subtasks.filter((s) => s.done).length}/${task.subtasks.length}`
+          }
+          items={task.subtasks.map((s) => ({
+            key: s.id,
+            title: s.title,
+            done: s.done,
+          }))}
+          onToggle={(key) => toggleSubtask(task.id, key)}
+          onRemove={(key) => removeSubtask(task.id, key)}
+          onAdd={(title) => addSubtask(task.id, title)}
+        />
 
         <div className="flex flex-col gap-2">
           <label htmlFor={notesId} className={SECTION_LABEL}>
@@ -359,6 +401,19 @@ function TaskDetails({
         >
           Save
         </button>
+        <div aria-live="polite">
+          <button
+            type="button"
+            onClick={handleSaveTemplate}
+            className="min-h-11 px-2 text-sm font-medium text-muted underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-accent"
+          >
+            {templateResult === "saved"
+              ? "Template saved ✓"
+              : templateResult === "replaced"
+                ? "Template replaced ✓"
+                : "Save as template"}
+          </button>
+        </div>
         <button
           type="button"
           onClick={handleDelete}
@@ -367,87 +422,6 @@ function TaskDetails({
           Delete task
         </button>
       </footer>
-    </div>
-  );
-}
-
-/** Subtasks save right away, not with Save (TD70, TD71); the new-subtask text is local and not part of `dirty`. */
-function SubtasksEditor({ task }: { task: Task }) {
-  const [text, setText] = useState("");
-  const inputRef = useRef<HTMLInputElement>(null);
-  const total = task.subtasks.length;
-  const doneCount = task.subtasks.filter((s) => s.done).length;
-
-  function add() {
-    if (text.trim() === "") return;
-    addSubtask(task.id, text);
-    setText("");
-    inputRef.current?.focus();
-  }
-
-  return (
-    <div className="flex flex-col gap-2">
-      <h3 className={SECTION_LABEL}>
-        {total === 0 ? "Subtasks" : `Subtasks · ${doneCount}/${total}`}
-      </h3>
-      {total > 0 && (
-        <ul>
-          {task.subtasks.map((subtask) => (
-            <li
-              key={subtask.id}
-              className="flex min-h-11 items-center gap-3 border-b border-border"
-            >
-              <label className="flex min-h-11 min-w-0 flex-1 cursor-pointer items-center gap-3 text-base">
-                <input
-                  type="checkbox"
-                  aria-label={`Mark “${subtask.title}” as done`}
-                  checked={subtask.done}
-                  onChange={() => toggleSubtask(task.id, subtask.id)}
-                  className="size-4 shrink-0 accent-accent"
-                />
-                <span
-                  className={`min-w-0 flex-1 break-words ${subtask.done ? "text-muted line-through" : ""}`}
-                >
-                  {subtask.title}
-                </span>
-              </label>
-              <button
-                type="button"
-                aria-label={`Remove “${subtask.title}”`}
-                onClick={() => removeSubtask(task.id, subtask.id)}
-                className="flex size-9 shrink-0 items-center justify-center rounded-full text-muted hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-accent"
-              >
-                <X className="size-4" aria-hidden="true" />
-              </button>
-            </li>
-          ))}
-        </ul>
-      )}
-      <div className="flex gap-2">
-        <input
-          ref={inputRef}
-          value={text}
-          onChange={(event) => setText(event.target.value)}
-          onKeyDown={(event) => {
-            if (event.key === "Enter") {
-              event.preventDefault();
-              add();
-            }
-          }}
-          placeholder="Add subtask"
-          aria-label="New subtask"
-          autoComplete="off"
-          className="min-h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-4 text-base placeholder:text-muted focus-visible:outline-2 focus-visible:outline-accent"
-        />
-        <button
-          type="button"
-          aria-label="Add subtask"
-          onClick={add}
-          className="flex min-h-11 items-center justify-center rounded-xl border border-border px-4 hover:bg-surface-muted focus-visible:outline-2 focus-visible:outline-accent"
-        >
-          <Plus className="size-4" aria-hidden="true" />
-        </button>
-      </div>
     </div>
   );
 }

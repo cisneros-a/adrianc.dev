@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { Status, Task } from "@/lib/tasks/model";
 import { msUntilMidnight, todayKey } from "@/lib/tasks/dates";
 import {
@@ -26,7 +26,8 @@ const HOLD_MS = 2000;
 
 type UndoState =
   | { action: "completed"; id: string; title: string; previous: Status }
-  | { action: "added"; id: string; title: string };
+  | { action: "added"; id: string; title: string }
+  | { action: "template"; id: string; replaced: boolean };
 
 /** The whole app below the header: add, filter, list, and the detail panel. */
 export function TodoApp() {
@@ -122,7 +123,7 @@ export function TodoApp() {
   }
 
   function handleUndo() {
-    if (!undo) return;
+    if (!undo || undo.action === "template") return;
     if (undo.action === "completed") {
       updateTask(undo.id, { status: undo.previous });
       release(undo.id);
@@ -136,6 +137,32 @@ export function TodoApp() {
   function handleAdded(task: Task) {
     setUndo({ action: "added", id: task.id, title: task.title });
   }
+
+  function handleTemplateSaved(result: "saved" | "replaced") {
+    setUndo({
+      action: "template",
+      id: crypto.randomUUID(),
+      replaced: result === "replaced",
+    });
+  }
+
+  // Memoized so the toast sees the same object until `undo` changes: it uses
+  // the object's identity to pause and restart its timer.
+  const toast = useMemo(() => {
+    if (!undo) return null;
+    if (undo.action === "template") {
+      return {
+        id: undo.id,
+        text: undo.replaced ? "Template replaced" : "Template saved",
+        undoable: false,
+      };
+    }
+    return {
+      id: undo.id,
+      text: `“${undo.title}” ${undo.action}`,
+      undoable: true,
+    };
+  }, [undo]);
 
   // Searching only done tasks opens Completed, like filtering on Done (TD33).
   function handleTextChange(next: string) {
@@ -189,6 +216,7 @@ export function TodoApp() {
         adding={adding}
         onAddingChange={setAdding}
         onAdded={handleAdded}
+        onTemplateSaved={handleTemplateSaved}
       />
 
       {tasks === null ? (
@@ -242,7 +270,7 @@ export function TodoApp() {
 
       <TaskPanel task={openTask} onClose={() => setOpenTaskId(null)} />
       <UndoToast
-        message={undo}
+        message={toast}
         onUndo={handleUndo}
         onDismiss={() => setUndo(null)}
       />

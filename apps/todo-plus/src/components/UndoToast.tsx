@@ -5,16 +5,12 @@ import { useEffect, useRef, useState } from "react";
 const DURATION_MS = 5000;
 
 type UndoToastProps = {
-  message: {
-    id: string;
-    title: string;
-    action: "completed" | "added";
-  } | null;
+  message: { id: string; text: string; undoable: boolean } | null;
   onUndo: () => void;
   onDismiss: () => void;
 };
 
-/** A flag on the left edge, shown for 5 seconds after checking a task off or adding one (T12, TD27, TD40). */
+/** A flag on the left edge, shown for 5 seconds after checking a task off, adding one or saving a template (T12, TD27, TD40, TD82). Undo shows only when `undoable`. */
 export function UndoToast({ message, onUndo, onDismiss }: UndoToastProps) {
   // Which message the pointer or focus is on; a different message is not paused.
   const [pausedFor, setPausedFor] = useState<typeof message>(null);
@@ -57,16 +53,20 @@ export function UndoToast({ message, onUndo, onDismiss }: UndoToastProps) {
           onBlur={() => setPausedFor(null)}
           className="fixed bottom-[max(1rem,env(safe-area-inset-bottom))] left-0 z-30 flex min-h-11 max-w-[min(20rem,calc(100vw-4rem))] items-center rounded-r-full bg-accent pr-2 pl-4 text-sm text-accent-foreground shadow-lg motion-safe:animate-flag-in"
         >
-          <span className="min-w-0 truncate">
-            “{message.title}” {message.action}
-          </span>
-          <button
-            type="button"
-            onClick={onUndo}
-            className="min-h-11 shrink-0 px-3 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-foreground"
+          <span
+            className={`min-w-0 truncate ${message.undoable ? "" : "pr-2"}`}
           >
-            Undo
-          </button>
+            {message.text}
+          </span>
+          {message.undoable && (
+            <button
+              type="button"
+              onClick={onUndo}
+              className="min-h-11 shrink-0 px-3 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-foreground"
+            >
+              Undo
+            </button>
+          )}
         </div>
       )}
     </div>
