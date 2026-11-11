@@ -35,16 +35,27 @@
   --priority-high-fg: #855400;
   --priority-urgent-bg: #fbe3dd;
   --priority-urgent-fg: #b3341a;
-  /* Task type colors (TD17), shown as the edge on the right of each task card. */
-  --type-work: #4165de;
-  --type-personal: #d6409f;
-  --type-home: #03a1c5;
-  --type-errands: #ffcb17;
-  /* Darker shades of the same hues for text on a 25% type tint, on any background (4.6:1 or more). */
-  --type-work-text: #3452b3;
-  --type-personal-text: #9a2e72;
-  --type-home-text: #02657d;
-  --type-errands-text: #7f660b;
+  /* Category colors (10-color palette): the edge on the right of each task card, chip outlines and icon tints; -text is a darker shade for text on a tint (4.6:1 or more). */
+  --cat-blue: #4165de;
+  --cat-magenta: #d6409f;
+  --cat-teal: #03a1c5;
+  --cat-yellow: #ffcb17;
+  --cat-mint: #0ca678;
+  --cat-purple: #8250df;
+  --cat-red: #e03131;
+  --cat-orange: #f76707;
+  --cat-brown: #9c6b3c;
+  --cat-slate: #64748b;
+  --cat-blue-text: #3452b3;
+  --cat-magenta-text: #9a2e72;
+  --cat-teal-text: #02657d;
+  --cat-yellow-text: #7f660b;
+  --cat-mint-text: #086b4d;
+  --cat-purple-text: #692ed9;
+  --cat-red-text: #ac1a1a;
+  --cat-orange-text: #9c4104;
+  --cat-brown-text: #79532e;
+  --cat-slate-text: #4f5b6d;
   /* Dims the page behind the open filter panel. */
   --scrim: rgb(0 0 0 / 0.2);
 }
@@ -72,14 +83,26 @@
     --priority-high-fg: #fbd98a;
     --priority-urgent-bg: #4f1d14;
     --priority-urgent-fg: #ffb4a3;
-    --type-work: #6b8cff;
-    --type-personal: #ec6bbd;
-    --type-home: #22c3e6;
-    --type-errands: #ffd84d;
-    --type-work-text: #85a0ff;
-    --type-personal-text: #ef81c7;
-    --type-home-text: #22c3e6;
-    --type-errands-text: #ffd84d;
+    --cat-blue: #6b8cff;
+    --cat-magenta: #ec6bbd;
+    --cat-teal: #22c3e6;
+    --cat-yellow: #ffd84d;
+    --cat-mint: #38d9a9;
+    --cat-purple: #a78bfa;
+    --cat-red: #ff6b6b;
+    --cat-orange: #ff922b;
+    --cat-brown: #c4935f;
+    --cat-slate: #94a3b8;
+    --cat-blue-text: #85a0ff;
+    --cat-magenta-text: #ef81c7;
+    --cat-teal-text: #22c3e6;
+    --cat-yellow-text: #ffd84d;
+    --cat-mint-text: #38d9a9;
+    --cat-purple-text: #b199fb;
+    --cat-red-text: #ff7f7f;
+    --cat-orange-text: #ff922b;
+    --cat-brown-text: #cba072;
+    --cat-slate-text: #9eabbf;
     --scrim: rgb(0 0 0 / 0.45);
   }
 }
@@ -106,14 +129,26 @@
   --priority-high-fg: #fbd98a;
   --priority-urgent-bg: #4f1d14;
   --priority-urgent-fg: #ffb4a3;
-  --type-work: #6b8cff;
-  --type-personal: #ec6bbd;
-  --type-home: #22c3e6;
-  --type-errands: #ffd84d;
-  --type-work-text: #85a0ff;
-  --type-personal-text: #ef81c7;
-  --type-home-text: #22c3e6;
-  --type-errands-text: #ffd84d;
+  --cat-blue: #6b8cff;
+  --cat-magenta: #ec6bbd;
+  --cat-teal: #22c3e6;
+  --cat-yellow: #ffd84d;
+  --cat-mint: #38d9a9;
+  --cat-purple: #a78bfa;
+  --cat-red: #ff6b6b;
+  --cat-orange: #ff922b;
+  --cat-brown: #c4935f;
+  --cat-slate: #94a3b8;
+  --cat-blue-text: #85a0ff;
+  --cat-magenta-text: #ef81c7;
+  --cat-teal-text: #22c3e6;
+  --cat-yellow-text: #ffd84d;
+  --cat-mint-text: #38d9a9;
+  --cat-purple-text: #b199fb;
+  --cat-red-text: #ff7f7f;
+  --cat-orange-text: #ff922b;
+  --cat-brown-text: #cba072;
+  --cat-slate-text: #9eabbf;
   --scrim: rgb(0 0 0 / 0.45);
 }
 
@@ -137,14 +172,26 @@
   --color-priority-high-fg: var(--priority-high-fg);
   --color-priority-urgent-bg: var(--priority-urgent-bg);
   --color-priority-urgent-fg: var(--priority-urgent-fg);
-  --color-type-work: var(--type-work);
-  --color-type-personal: var(--type-personal);
-  --color-type-home: var(--type-home);
-  --color-type-errands: var(--type-errands);
-  --color-type-work-text: var(--type-work-text);
-  --color-type-personal-text: var(--type-personal-text);
-  --color-type-home-text: var(--type-home-text);
-  --color-type-errands-text: var(--type-errands-text);
+  --color-cat-blue: var(--cat-blue);
+  --color-cat-magenta: var(--cat-magenta);
+  --color-cat-teal: var(--cat-teal);
+  --color-cat-yellow: var(--cat-yellow);
+  --color-cat-mint: var(--cat-mint);
+  --color-cat-purple: var(--cat-purple);
+  --color-cat-red: var(--cat-red);
+  --color-cat-orange: var(--cat-orange);
+  --color-cat-brown: var(--cat-brown);
+  --color-cat-slate: var(--cat-slate);
+  --color-cat-blue-text: var(--cat-blue-text);
+  --color-cat-magenta-text: var(--cat-magenta-text);
+  --color-cat-teal-text: var(--cat-teal-text);
+  --color-cat-yellow-text: var(--cat-yellow-text);
+  --color-cat-mint-text: var(--cat-mint-text);
+  --color-cat-purple-text: var(--cat-purple-text);
+  --color-cat-red-text: var(--cat-red-text);
+  --color-cat-orange-text: var(--cat-orange-text);
+  --color-cat-brown-text: var(--cat-brown-text);
+  --color-cat-slate-text: var(--cat-slate-text);
   --color-scrim: var(--scrim);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -208,5 +255,35 @@ html:has([data-filters-open]) {
 @keyframes backdrop-out {
   to {
     opacity: 0;
+  }
+}
+
+/* Settings views slide sideways (280 ms). Every view is absolutely positioned:
+   data-pos="current" is on screen, "behind" has been pushed 30% to the left,
+   "ahead" waits off to the right. Hidden views get visibility: hidden once
+   they've moved away, which also keeps them out of the tab order. With
+   reduced motion there is no transition, so views switch instantly. */
+.settings-view[data-pos="current"] {
+  transform: translateX(0);
+  visibility: visible;
+}
+.settings-view[data-pos="behind"] {
+  transform: translateX(-30%);
+  visibility: hidden;
+}
+.settings-view[data-pos="ahead"] {
+  transform: translateX(100%);
+  visibility: hidden;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .settings-view {
+    transition:
+      transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s linear 280ms;
+  }
+  .settings-view[data-pos="current"] {
+    transition:
+      transform 280ms cubic-bezier(0.2, 0.8, 0.2, 1),
+      visibility 0s;
   }
 }

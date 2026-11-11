@@ -9,6 +9,15 @@ export function todayKey(): string {
   return `${now.getFullYear()}-${month}-${day}`;
 }
 
+/** The date `days` after `key` (before it, if negative), as "YYYY-MM-DD" in local time. */
+export function addDays(key: string, days: number): string {
+  const date = parseKey(key);
+  date.setDate(date.getDate() + days);
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
 export function isOverdue(deadline: string, today: string): boolean {
   return deadline < today; // "YYYY-MM-DD" compares correctly as text
 }

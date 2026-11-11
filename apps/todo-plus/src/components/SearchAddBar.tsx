@@ -7,21 +7,23 @@ import {
   type FormEvent,
   type KeyboardEvent,
 } from "react";
+import { useCategories } from "@/lib/categories/store";
 import {
-  DEFAULT_TASK,
   PRIORITIES,
   PRIORITY_LABELS,
-  TASK_TYPES,
   type Priority,
   type Task,
   type TaskType,
 } from "@/lib/tasks/model";
+import { todayKey } from "@/lib/tasks/dates";
+import { defaultDeadlineDate } from "@/lib/settings/model";
+import { useDefaults } from "@/lib/settings/store";
 import { addTask } from "@/lib/tasks/store";
 import type { Template } from "@/lib/templates/model";
 import { saveTemplate, useTemplates } from "@/lib/templates/store";
 import { Chip } from "./Chip";
 import { SubtasksField } from "./SubtasksField";
-import { TypeChip } from "./TypeChip";
+import { CategoryChip } from "./CategoryChip";
 import { SECTION_LABEL } from "./styles";
 
 type SearchAddBarProps = {
@@ -37,7 +39,9 @@ type SearchAddBarProps = {
  * The box at the top (T16-T22). In search mode it filters the list as you type
  * (T16); the + button turns on add mode (T17, TD38), where the box holds a new
  * task's title and its details show underneath (TD36). Add mode stays on after
- * each add (T18); the type is kept and the other details reset (T19, TD39).
+ * each add (T18); the category is kept and the other details go back to the
+ * user's defaults from Settings (T19, TD39). A default of None leaves that
+ * field empty, and adding with Priority or Category empty shows an error.
  * The text is shared between modes (T20). Escape clears the search or leaves
  * add mode (TD32). The label floats onto the top border once there's text
  * (T21, T22, TD41). Adding works with Enter or the button (TD37). The details
@@ -54,9 +58,25 @@ export function SearchAddBar({
   onAdded,
   onTemplateSaved,
 }: SearchAddBarProps) {
-  const [priority, setPriority] = useState<Priority>(DEFAULT_TASK.priority);
-  const [type, setType] = useState<TaskType>(DEFAULT_TASK.type);
+  const defaults = useDefaults();
+  const categories = useCategories();
+  // The form starts from the defaults once they've loaded from the browser.
+  const [started, setStarted] = useState(false);
+  const [priority, setPriority] = useState<Priority | null>(null);
+  const [type, setType] = useState<TaskType | null>(null);
   const [deadline, setDeadline] = useState<string | null>(null);
+  // Which required fields were left empty on the last Add / Save as template.
+  const [missing, setMissing] = useState({ priority: false, category: false });
+  const priorityGroupRef = useRef<HTMLDivElement>(null);
+  const categoryGroupRef = useRef<HTMLDivElement>(null);
+  if (!started && defaults !== null && categories !== null) {
+    setStarted(true);
+    setPriority(defaults.priority);
+    setType(validCategoryId(categories, defaults.category));
+    setDeadline(defaultDeadlineDate(defaults.deadline, todayKey()));
+  }
+  // A kept category that was deleted since counts as nothing selected.
+  const selectedType = validCategoryId(categories ?? [], type);
   const [notes, setNotes] = useState("");
   const [subtasks, setSubtasks] = useState<{ key: string; title: string }[]>(
     [],
@@ -70,32 +90,48 @@ export function SearchAddBar({
   const hasText = text !== "";
   const showClear = !adding && hasText;
 
+  // True when Priority and Category are both picked. Otherwise shows the
+  // errors and focuses the first chip of the first empty group.
+  function checkRequired(): boolean {
+    const noPriority = priority === null;
+    const noCategory = selectedType === null;
+    setMissing({ priority: noPriority, category: noCategory });
+    if (noPriority) focusFirstChip(priorityGroupRef.current);
+    else if (noCategory) focusFirstChip(categoryGroupRef.current);
+    return !noPriority && !noCategory;
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const title = text.trim();
     if (!adding || !title) return;
+    if (!checkRequired() || priority === null || selectedType === null) return;
     const task = addTask(
       title,
-      { priority, type, deadline, notes },
+      { priority, type: selectedType, deadline, notes },
       subtasks.map((s) => s.title),
     );
     onAdded(task);
     onTextChange("");
-    // Keep the type; everything else goes back to its default (T19).
-    setPriority(DEFAULT_TASK.priority);
-    setDeadline(null);
+    // Keep the category; priority and deadline go back to the defaults (T19).
+    if (defaults !== null) {
+      setPriority(defaults.priority);
+      setDeadline(defaultDeadlineDate(defaults.deadline, todayKey()));
+    }
     setNotes("");
     setSubtasks([]);
     inputRef.current?.focus();
   }
 
-  // Replaces everything in the form, including a typed title; no deadline (T55, TD75).
+  // Replaces everything in the form, including a typed title. The deadline
+  // is the default deadline (T55, TD75).
   function applyTemplate(template: Template) {
     onTextChange(template.title);
     setPriority(template.priority);
-    setType(template.type);
+    setType(validCategoryId(categories ?? [], template.type));
     setNotes(template.notes);
-    setDeadline(null);
+    setDeadline(defaultDeadlineDate(defaults?.deadline ?? "none", todayKey()));
+    setMissing({ priority: false, category: false });
     setSubtasks(
       template.subtasks.map((title) => ({ key: crypto.randomUUID(), title })),
     );
@@ -105,11 +141,12 @@ export function SearchAddBar({
   function handleSaveTemplate() {
     const title = text.trim();
     if (!title) return;
+    if (!checkRequired() || priority === null || selectedType === null) return;
     onTemplateSaved(
       saveTemplate({
         title,
         priority,
-        type,
+        type: selectedType,
         notes,
         subtasks: subtasks.map((s) => s.title),
       }),
@@ -253,24 +290,40 @@ export function SearchAddBar({
               </ChoiceGroup>
             )}
 
-            <ChoiceGroup label="Priority" required>
+            <ChoiceGroup
+              label="Priority"
+              required
+              error={missing.priority ? "Pick a priority" : undefined}
+              chipsRef={priorityGroupRef}
+            >
               {PRIORITIES.map((value) => (
                 <Chip
                   key={value}
                   label={PRIORITY_LABELS[value]}
                   selected={priority === value}
-                  onClick={() => setPriority(value)}
+                  onClick={() => {
+                    setPriority(value);
+                    setMissing((m) => ({ ...m, priority: false }));
+                  }}
                 />
               ))}
             </ChoiceGroup>
 
-            <ChoiceGroup label="Type" required>
-              {TASK_TYPES.map((value) => (
-                <TypeChip
-                  key={value}
-                  type={value}
-                  selected={type === value}
-                  onClick={() => setType(value)}
+            <ChoiceGroup
+              label="Category"
+              required
+              error={missing.category ? "Pick a category" : undefined}
+              chipsRef={categoryGroupRef}
+            >
+              {(categories ?? []).map((category) => (
+                <CategoryChip
+                  key={category.id}
+                  category={category}
+                  selected={selectedType === category.id}
+                  onClick={() => {
+                    setType(category.id);
+                    setMissing((m) => ({ ...m, category: false }));
+                  }}
                 />
               ))}
             </ChoiceGroup>
@@ -372,18 +425,39 @@ function SearchIcon({ className }: { className: string }) {
   );
 }
 
+/** The id if a category with it exists, otherwise null. */
+function validCategoryId(
+  categories: { id: string }[],
+  id: string | null,
+): string | null {
+  return id !== null && categories.some((c) => c.id === id) ? id : null;
+}
+
+function focusFirstChip(group: HTMLElement | null) {
+  group?.querySelector<HTMLElement>("button")?.focus();
+}
+
 function ChoiceGroup({
   label,
   required = false,
+  error,
+  chipsRef,
   children,
 }: {
   label: string;
   /** Marks the field as required with an orange asterisk (TD52). */
   required?: boolean;
+  /** Shown under the chips in the danger color when the field was left empty. */
+  error?: string;
+  chipsRef?: React.Ref<HTMLDivElement>;
   children: React.ReactNode;
 }) {
+  const errorId = useId();
   return (
-    <fieldset className="flex flex-col gap-2">
+    <fieldset
+      aria-describedby={error ? errorId : undefined}
+      className="flex flex-col gap-2"
+    >
       <legend className={`mb-2 ${SECTION_LABEL}`}>
         {label}
         {required && (
@@ -395,7 +469,14 @@ function ChoiceGroup({
           </>
         )}
       </legend>
-      <div className="flex flex-wrap gap-1.5">{children}</div>
+      <div ref={chipsRef} className="flex flex-wrap gap-1.5">
+        {children}
+      </div>
+      {error && (
+        <p id={errorId} className="text-sm text-danger">
+          {error}
+        </p>
+      )}
     </fieldset>
   );
 }

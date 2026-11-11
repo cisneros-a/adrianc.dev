@@ -3,8 +3,8 @@
 export const PRIORITIES = ["low", "medium", "high", "urgent"] as const;
 export type Priority = (typeof PRIORITIES)[number];
 
-export const TASK_TYPES = ["work", "personal", "home", "errands"] as const;
-export type TaskType = (typeof TASK_TYPES)[number];
+/** The id of a category (see src/lib/categories). Saved tasks keep the field name `type`. */
+export type TaskType = string;
 
 export const STATUSES = ["todo", "in_progress", "done"] as const;
 export type Status = (typeof STATUSES)[number];
@@ -14,13 +14,6 @@ export const PRIORITY_LABELS: Record<Priority, string> = {
   medium: "Medium",
   high: "High",
   urgent: "Urgent",
-};
-
-export const TASK_TYPE_LABELS: Record<TaskType, string> = {
-  work: "Work",
-  personal: "Personal",
-  home: "Home",
-  errands: "Errands",
 };
 
 export const STATUS_LABELS: Record<Status, string> = {
@@ -56,19 +49,12 @@ export type TaskChanges = Partial<
   Pick<Task, "title" | "notes" | "priority" | "type" | "status" | "deadline">
 >;
 
+/** What a new task gets for the fields the caller doesn't give. Priority and category have no fixed default: they come from the user's defaults (Settings). */
 export const DEFAULT_TASK: Pick<
   Task,
-  | "notes"
-  | "priority"
-  | "type"
-  | "status"
-  | "deadline"
-  | "completedOn"
-  | "subtasks"
+  "notes" | "status" | "deadline" | "completedOn" | "subtasks"
 > = {
   notes: "",
-  priority: "medium",
-  type: "personal",
   status: "todo",
   deadline: null,
   completedOn: null,
@@ -80,7 +66,7 @@ export function isPriority(value: unknown): value is Priority {
 }
 
 export function isTaskType(value: unknown): value is TaskType {
-  return TASK_TYPES.includes(value as TaskType);
+  return typeof value === "string" && value !== "";
 }
 
 export function isStatus(value: unknown): value is Status {

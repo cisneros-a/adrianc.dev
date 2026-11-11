@@ -93,7 +93,43 @@ export function saveTemplate(details: TemplateDetails): "saved" | "replaced" {
   return "saved";
 }
 
-/** Templates can be deleted, not edited (T54). */
+/**
+ * Changes a template from the Edit template view. Renaming to another
+ * template's name (ignoring case and spaces, and ignoring itself) isn't saved.
+ */
+export function updateTemplate(
+  id: string,
+  details: TemplateDetails,
+): "saved" | "name-taken" {
+  const fields = {
+    title: details.title.trim(),
+    priority: details.priority,
+    type: details.type,
+    notes: details.notes,
+    subtasks: details.subtasks.map((s) => s.trim()).filter((s) => s !== ""),
+  };
+  const key = templateKey(fields.title);
+  const current = getTemplates();
+  if (current.some((t) => t.id !== id && templateKey(t.title) === key)) {
+    return "name-taken";
+  }
+  const now = new Date().toISOString();
+  setTemplates(
+    current.map((t) => (t.id === id ? { ...t, ...fields, updatedAt: now } : t)),
+  );
+  return "saved";
+}
+
+/** Templates can be edited (updateTemplate) and deleted. */
 export function deleteTemplate(id: string): void {
   setTemplates(getTemplates().filter((t) => t.id !== id));
+}
+
+/** Moves every template from one category to another, when a category is deleted. */
+export function reassignType(fromId: string, toId: string): void {
+  const current = getTemplates();
+  if (!current.some((t) => t.type === fromId)) return;
+  setTemplates(
+    current.map((t) => (t.type === fromId ? { ...t, type: toId } : t)),
+  );
 }

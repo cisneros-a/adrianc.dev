@@ -7,7 +7,6 @@ import {
   PRIORITY_LABELS,
   STATUSES,
   STATUS_LABELS,
-  TASK_TYPES,
   type Priority,
   type Task,
   type Status,
@@ -21,9 +20,10 @@ import {
   updateTask,
 } from "@/lib/tasks/store";
 import { saveTemplate } from "@/lib/templates/store";
+import { useCategories } from "@/lib/categories/store";
 import { Chip } from "./Chip";
 import { SubtasksField } from "./SubtasksField";
-import { TypeChip } from "./TypeChip";
+import { CategoryChip } from "./CategoryChip";
 import { SECTION_LABEL } from "./styles";
 
 type TaskPanelProps = {
@@ -152,6 +152,7 @@ function TaskDetails({
     deadline: task.deadline,
     notes: task.notes,
   });
+  const categories = useCategories() ?? [];
   const [confirming, setConfirming] = useState(false);
   // What the "Save as template" link says for 3 seconds after saving (TD82).
   const [templateResult, setTemplateResult] = useState<
@@ -292,13 +293,13 @@ function TaskDetails({
           ))}
         </ChoiceGroup>
 
-        <ChoiceGroup label="Type">
-          {TASK_TYPES.map((type) => (
-            <TypeChip
-              key={type}
-              type={type}
-              selected={draft.type === type}
-              onClick={() => update({ type })}
+        <ChoiceGroup label="Category">
+          {categories.map((category) => (
+            <CategoryChip
+              key={category.id}
+              category={category}
+              selected={draft.type === category.id}
+              onClick={() => update({ type: category.id })}
             />
           ))}
         </ChoiceGroup>
