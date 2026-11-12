@@ -123,10 +123,10 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App       | URL                           | Description                                                                                               | Status                                                                                                                        |
-| --------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
-| portfolio | https://adrianc.dev           | Main portfolio site                                                                                       | Scaffolded (placeholder page, not deployed)                                                                                   |
-| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and custom categories ([README](apps/todo-plus/README.md)) | Iteration 1 deployed 2026-11-09 (front end only, tasks saved in the browser). Categories and defaults built, not deployed yet |
+| App       | URL                           | Description                                                                                               | Status                                                                                                                                      |
+| --------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| portfolio | https://adrianc.dev           | Main portfolio site                                                                                       | Scaffolded (placeholder page, not deployed)                                                                                                 |
+| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and custom categories ([README](apps/todo-plus/README.md)) | Iteration 1 deployed 2026-11-09 (front end only, tasks saved in the browser). Categories, defaults and template editing deployed 2026-11-12 |
 
 ## Commands
 
