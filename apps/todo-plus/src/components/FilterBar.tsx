@@ -6,7 +6,6 @@ import {
   PRIORITY_LABELS,
   STATUSES,
   STATUS_LABELS,
-  TASK_TYPES,
 } from "@/lib/tasks/model";
 import {
   DEADLINE_RANGES,
@@ -15,8 +14,9 @@ import {
   countActiveFilters,
   type Filters,
 } from "@/lib/tasks/filters";
+import { useCategories } from "@/lib/categories/store";
 import { Chip } from "./Chip";
-import { TypeChip } from "./TypeChip";
+import { CategoryChip } from "./CategoryChip";
 import { SECTION_LABEL } from "./styles";
 
 type FilterBarProps = {
@@ -28,7 +28,7 @@ type FilterBarProps = {
 };
 
 /**
- * Filters by status, priority, type and deadline (T2), collapsed by default to save space on phones (T8).
+ * Filters by status, priority, category and deadline (T2), collapsed by default to save space on phones (T8).
  * The open panel floats over the list (the list doesn't move) with a scrim dimming the page behind it.
  */
 export function FilterBar({
@@ -41,6 +41,7 @@ export function FilterBar({
   const [open, setOpen] = useState(false);
   const panelId = useId();
   const buttonRef = useRef<HTMLButtonElement>(null);
+  const categories = useCategories() ?? [];
   const active = countActiveFilters(filters);
 
   function toggle<K extends keyof Filters>(
@@ -124,13 +125,13 @@ export function FilterBar({
                 />
               ))}
             </FilterGroup>
-            <FilterGroup label="Type">
-              {TASK_TYPES.map((type) => (
-                <TypeChip
-                  key={type}
-                  type={type}
-                  selected={filters.types.includes(type)}
-                  onClick={() => toggle("types", type)}
+            <FilterGroup label="Category">
+              {categories.map((category) => (
+                <CategoryChip
+                  key={category.id}
+                  category={category}
+                  selected={filters.types.includes(category.id)}
+                  onClick={() => toggle("types", category.id)}
                 />
               ))}
             </FilterGroup>

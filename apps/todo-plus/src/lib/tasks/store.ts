@@ -6,9 +6,11 @@
 import { useSyncExternalStore } from "react";
 import {
   DEFAULT_TASK,
+  type Priority,
   type Subtask,
   type Task,
   type TaskChanges,
+  type TaskType,
 } from "./model";
 import { isTasksStorageKey, loadTasks, saveTasks } from "./storage";
 
@@ -59,7 +61,7 @@ export function useTasks(): Task[] | null {
  */
 export function addTask(
   title: string,
-  details: TaskChanges = {},
+  details: TaskChanges & { priority: Priority; type: TaskType },
   subtaskTitles: string[] = [],
 ): Task {
   const now = new Date().toISOString();
@@ -100,6 +102,16 @@ export function updateTask(id: string, changes: TaskChanges): void {
 
 export function deleteTask(id: string): void {
   setTasks(getTasks().filter((task) => task.id !== id));
+}
+
+/** Moves every task (done or not) from one category to another, when a category is deleted. */
+export function reassignType(fromId: string, toId: string): void {
+  if (!getTasks().some((task) => task.type === fromId)) return;
+  setTasks(
+    getTasks().map((task) =>
+      task.type === fromId ? { ...task, type: toId } : task,
+    ),
+  );
 }
 
 /**

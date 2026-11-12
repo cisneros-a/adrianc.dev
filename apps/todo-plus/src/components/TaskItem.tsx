@@ -2,25 +2,14 @@
 
 import { Check, ChevronDown, FileText, ListChecks } from "lucide-react";
 import { useId, useState } from "react";
-import {
-  STATUS_LABELS,
-  TASK_TYPE_LABELS,
-  type Task,
-  type TaskType,
-} from "@/lib/tasks/model";
+import { findCategory, NO_CATEGORY_LABEL } from "@/lib/categories/model";
+import { CATEGORY_COLOR_CLASSES } from "@/lib/categories/palette";
+import { useCategories } from "@/lib/categories/store";
+import { STATUS_LABELS, type Task } from "@/lib/tasks/model";
 import { toggleSubtask } from "@/lib/tasks/store";
 import { formatDeadline, isOverdue } from "@/lib/tasks/dates";
 import { PriorityBadge } from "./PriorityBadge";
-import { TypeIcon } from "./TypeIcon";
-
-// A solid strip of the task type's color on the right of the card (TD17).
-// Full class names so Tailwind can find them when building the CSS.
-const TYPE_EDGE: Record<TaskType, string> = {
-  work: "shadow-[4px_0_0_0_var(--color-type-work)]",
-  personal: "shadow-[4px_0_0_0_var(--color-type-personal)]",
-  home: "shadow-[4px_0_0_0_var(--color-type-home)]",
-  errands: "shadow-[4px_0_0_0_var(--color-type-errands)]",
-};
+import { CategoryIcon } from "./CategoryIcon";
 
 type TaskItemProps = {
   task: Task;
@@ -31,11 +20,13 @@ type TaskItemProps = {
 
 /**
  * One row: a checkbox to mark it done, and the rest of the row opens the detail panel (T3).
- * The type shows as an icon in the top-right corner (T30); its name stays as hidden text for screen readers (TD55).
+ * The category shows as an icon in the top-right corner (T30); its name stays as hidden text for screen readers (TD55).
  * With subtasks, a counter at the bottom right opens or closes their list on the card (T40, TD72);
  * ticking one saves right away, with no Undo toast (T41, TD73). Adding and removing happen in the modal (T42).
  */
 export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
+  const categories = useCategories();
+  const category = findCategory(categories, task.type);
   const done = task.status === "done";
   const overdue =
     !done && task.deadline !== null && isOverdue(task.deadline, today);
@@ -47,7 +38,7 @@ export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
 
   return (
     <li
-      className={`relative flex flex-col rounded-xl border border-border bg-surface ${TYPE_EDGE[task.type]}`}
+      className={`relative flex flex-col rounded-xl border border-border bg-surface ${CATEGORY_COLOR_CLASSES[category?.color ?? "slate"].edge}`}
     >
       <div className="relative flex items-stretch">
         <label className="flex shrink-0 cursor-pointer items-center px-4">
@@ -71,7 +62,9 @@ export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
           </span>
           <span className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
             <PriorityBadge priority={task.priority} />
-            <span className="sr-only">{TASK_TYPE_LABELS[task.type]}</span>
+            <span className="sr-only">
+              {category?.name ?? NO_CATEGORY_LABEL}
+            </span>
             {task.status === "in_progress" && (
               <span>{STATUS_LABELS.in_progress}</span>
             )}
@@ -90,8 +83,8 @@ export function TaskItem({ task, today, onOpen, onToggleDone }: TaskItemProps) {
           </span>
         </button>
         {/* pointer-events-none: a tap on the icon opens the task like the rest of the card. */}
-        <TypeIcon
-          type={task.type}
+        <CategoryIcon
+          category={category}
           className="pointer-events-none absolute top-3 right-3"
         />
         {total > 0 && (

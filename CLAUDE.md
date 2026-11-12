@@ -70,7 +70,7 @@ Short descriptions of each tool and its role here. Add entries as new tools come
   - **KV:** key-value store, with fast reads and slower writes.
   - **R2:** file storage, similar to Amazon S3.
   - **Durable Objects:** small stateful servers for real-time features.
-- **Lucide (`lucide-react`)** — a free, open-source set of simple line icons, each a React component. To Do + uses it for the task-type icons; only the icons imported end up in the built site.
+- **Lucide (`lucide-react`)** — a free, open-source set of simple line icons, each a React component. To Do + uses it for the category icons; only the icons imported end up in the built site.
 - **Tailwind CSS** — styling with small utility classes written directly in the markup (e.g. `px-4 text-lg`).
 - **TypeScript** — JavaScript with type checking.
 - **pnpm** — installs JavaScript packages. Its "workspaces" feature lets one repo hold several apps. `pnpm-workspace.yaml` lists the workspaces and, under `allowBuilds`, which packages may run install scripts (pnpm blocks them by default as a safety measure).
@@ -123,10 +123,10 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App       | URL                           | Description                                                                                        | Status                                                                       |
-| --------- | ----------------------------- | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| portfolio | https://adrianc.dev           | Main portfolio site                                                                                | Scaffolded (placeholder page, not deployed)                                  |
-| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and task types ([README](apps/todo-plus/README.md)) | Iteration 1 deployed 2026-11-09 (front end only, tasks saved in the browser) |
+| App       | URL                           | Description                                                                                               | Status                                                                                                                        |
+| --------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| portfolio | https://adrianc.dev           | Main portfolio site                                                                                       | Scaffolded (placeholder page, not deployed)                                                                                   |
+| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and custom categories ([README](apps/todo-plus/README.md)) | Iteration 1 deployed 2026-11-09 (front end only, tasks saved in the browser). Categories and defaults built, not deployed yet |
 
 ## Commands
 

@@ -15,6 +15,7 @@ import {
   sortCompletedTasks,
 } from "@/lib/tasks/sorting";
 import { deleteTask, updateTask, useTasks } from "@/lib/tasks/store";
+import { useCategories } from "@/lib/categories/store";
 import { FilterBar } from "./FilterBar";
 import { SearchAddBar } from "./SearchAddBar";
 import { TaskPanel } from "./TaskPanel";
@@ -32,7 +33,8 @@ type UndoState =
 /** The whole app below the header: add, filter, list, and the detail panel. */
 export function TodoApp() {
   const tasks = useTasks();
-  const [filters, setFilters] = useState<Filters>(NO_FILTERS);
+  const categories = useCategories();
+  const [chosenFilters, setFilters] = useState<Filters>(NO_FILTERS);
   const [openTaskId, setOpenTaskId] = useState<string | null>(null);
   // Deadlines are compared against this; it's refreshed after midnight and when the tab comes back (TD49).
   const [today, setToday] = useState(todayKey);
@@ -182,6 +184,17 @@ export function TodoApp() {
       setCompletedOpen(true);
     }
   }
+
+  // Drop category filters whose category was deleted, so they can't hide every task.
+  const categoryIds = new Set((categories ?? []).map((c) => c.id));
+  const filters: Filters =
+    categories === null ||
+    chosenFilters.types.every((id) => categoryIds.has(id))
+      ? chosenFilters
+      : {
+          ...chosenFilters,
+          types: chosenFilters.types.filter((id) => categoryIds.has(id)),
+        };
 
   const openTask = tasks?.find((task) => task.id === openTaskId) ?? null;
 
