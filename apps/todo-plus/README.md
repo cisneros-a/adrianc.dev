@@ -191,7 +191,7 @@ pnpm --filter todo-plus build      # static export to out/
 pnpm --filter todo-plus preview    # build, then serve out/ with wrangler dev (http://localhost:8788)
 pnpm --filter todo-plus lint
 pnpm --filter todo-plus typecheck
-pnpm --filter todo-plus deploy     # build, then wrangler deploy (see the Deployment section in CLAUDE.md)
+pnpm --filter todo-plus run deploy # build, then wrangler deploy (see the Deployment section in CLAUDE.md)
 ```
 
 ## Notes
