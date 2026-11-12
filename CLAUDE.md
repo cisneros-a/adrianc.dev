@@ -123,10 +123,10 @@ Deploys are run manually with Wrangler from Adrian's laptop (D3). Nothing deploy
 
 ## Projects
 
-| App       | URL                           | Description                                                                                               | Status                                                                                    |
-| --------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| portfolio | https://adrianc.dev           | Main portfolio site                                                                                       | Scaffolded (placeholder page, not deployed)                                               |
-| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and custom categories ([README](apps/todo-plus/README.md)) | Iteration 1 in progress (core list features, categories and defaults built, not deployed) |
+| App       | URL                           | Description                                                                                               | Status                                                                                                                        |
+| --------- | ----------------------------- | --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| portfolio | https://adrianc.dev           | Main portfolio site                                                                                       | Scaffolded (placeholder page, not deployed)                                                                                   |
+| todo-plus | https://todo-plus.adrianc.dev | To Do +: to-do list with priorities, deadlines and custom categories ([README](apps/todo-plus/README.md)) | Iteration 1 deployed 2026-11-09 (front end only, tasks saved in the browser). Categories and defaults built, not deployed yet |
 
 ## Commands
 
@@ -139,7 +139,7 @@ pnpm install                         # install dependencies for all apps
 pnpm --filter portfolio dev          # Next.js dev server, for fast iteration
 pnpm --filter portfolio build        # static export to apps/portfolio/out/
 pnpm --filter portfolio preview      # build, then serve out/ locally with `wrangler dev`, just as Cloudflare will
-pnpm --filter portfolio deploy       # build, then `wrangler deploy` to Cloudflare
+pnpm --filter portfolio run deploy   # build, then `wrangler deploy` to Cloudflare (`run` is needed: `pnpm deploy` is a built-in pnpm command)
 pnpm lint && pnpm typecheck          # all apps
 pnpm format                          # format everything with Prettier (format:check to only check)
 ```
